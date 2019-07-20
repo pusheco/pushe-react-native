@@ -1,0 +1,24 @@
+
+{
+  "name": "pushe-plus-react-native",
+  "version": "0.1.0",
+  "pushe-bundled-version": "2.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react-native",
+    "pushe.co",
+    "pushe-plus",
+    "notification"
+  ],
+  "author": "Amir Aleahmad",
+  "license": "",
+  "peerDependencies": {
+    "react-native": "^0.60.4",
+    "react-native-windows": "0.59.0-rc.1",
+    "invariant": "2.2.4"
+  }
+}
