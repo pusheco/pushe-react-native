@@ -28,7 +28,6 @@ function handleEventBroadcast(type, broadcast) {
         // else cache notification until handler is being set
 
         let handler = _handlerBaseType.get(type);
-        console.log("in handleEventBroadcast", type, broadcast, notification);
         if (handler) {
             handler(notification);
         } else {
