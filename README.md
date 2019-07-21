@@ -1,5 +1,5 @@
 
-# pushe-plus-react-native
+#
 
 ## Getting started
 
@@ -11,37 +11,37 @@
 
 ### Some Notes:
 
-1. Check if bellow line is added in your app manifest, if not add it:
+* Check if bellow line is added in your app manifest, if not add it:
 
-```xml
+    ```xml
     <service android:name="co.pushe.plus.RNPusheNotificationService" />
-```
+    ```
 
-2. Add bellow line in build.gradle
+* Add bellow line in build.gradle
 
-```gradle
+    ```gradle
     maven {
         url "https://dl.bintray.com/pushe/plus"
     }
-```
+    ```
 
-3. To run the background service add bellow line in "your_package_name.MainApplication#onCreate" address:
+* To run the background service add bellow line in "your_package_name.MainApplication#onCreate" address:
 
-```java
+    ```java
     co.pushe.plus.RNPushe.initializeEventListeners(this);
-```
+    ```
 
-4. In order to work with background service create a folder with desired name and export it like this:
+* In order to work with background service create a folder with desired name and export it like this:
 
-```javascript
+    ```javascript
     module.exports = async (notificationData) => {
         // do stuff
     };
-```
+    ```
 
-and also in your react app index.js add this line:
+    and also in your react app index.js add this line:
 
-```javascript
+    ```javascript
     AppRegistry.registerHeadlessTask('RNPusheNotificationService', () => require('file_name'));
-```
+    ```
 
