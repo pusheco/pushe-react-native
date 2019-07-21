@@ -10,12 +10,17 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.facebook.react.HeadlessJsTaskService;
+import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,27 +32,59 @@ import co.pushe.plus.notification.NotificationData;
 import co.pushe.plus.notification.PusheNotification;
 import co.pushe.plus.notification.PusheNotificationListener;
 import co.pushe.plus.notification.UserNotification;
+import co.pushe.plus.utils.RNPusheJson;
+import co.pushe.plus.utils.RNPusheTypes.EVENTS_TYPES;
+import co.pushe.plus.utils.RNPusheTypes.SEND_NOTIFICATION_TYPE;
 
-import static co.pushe.plus.RNPusheUtils.EVENT_TYPE;
-import static co.pushe.plus.RNPusheUtils.getNotificationIntent;
-import static co.pushe.plus.RNPusheUtils.isAppOnForeground;
-import static co.pushe.plus.RNPusheUtils.mapToBundle;
+import static co.pushe.plus.utils.RNPusheUtils.getNotificationIntent;
+import static co.pushe.plus.utils.RNPusheUtils.getNotificationJson;
+import static co.pushe.plus.utils.RNPusheUtils.jsonToWritableMap;
+import static co.pushe.plus.utils.RNPusheUtils.mapToBundle;
 
-public class RNPushe extends ReactContextBaseJavaModule {
+public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
     private final ReactApplicationContext reactContext;
 
+    /**
+     * Check if App is on foreground or not base on
+     * {@link com.facebook.react.bridge.LifecycleEventListener}
+     * LifecycleEventListener should be added to the context
+     */
+    private boolean isAppOnForeground = false;
+
+
+    PusheNotification pusheNotification;
 
     public RNPushe(final ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
+        this.reactContext.addLifecycleEventListener(this);
 
-        this.initializeNotificationCallbacks(reactContext);
+        pusheNotification = (PusheNotification) Pushe.getPusheService(Pushe.NOTIFICATION);
+
+        // This calls to initializeNotificationCallbacks is used when app is in foreground
+        this.initializeNotificationCallbacks();
     }
 
     @Override
     public String getName() {
         return "Pushe";
+    }
+
+
+    /**
+     * This is for initializing pushe event listeners when app is in background
+     * and should be called in a file that extends {@link android.app.Application}
+     * in react that would be {@link "com.my.package".MainApplication#onCreate}
+     * <p>
+     * This func calls initializeNotificationCallbacks with a different context
+     * than the real context of UI thread, the it should not be used when app in
+     * foreground.
+     *
+     * @param context
+     */
+    public static void initializeEventListeners(Context context) {
+        new RNPushe(new ReactApplicationContext(context)).initializeNotificationCallbacks();
     }
 
     private void sendEvent(String eventName, Object params) {
@@ -62,64 +99,44 @@ public class RNPushe extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void isRegistered(final Promise promise) {
-        try {
-            Boolean registered = Pushe.isRegistered();
-            promise.resolve(registered);
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        Boolean registered = Pushe.isRegistered();
+        promise.resolve(registered);
     }
 
     @ReactMethod
     public void isInitialized(final Promise promise) {
-        try {
-            Boolean initialized = Pushe.isInitialized();
-            promise.resolve(initialized);
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        Boolean initialized = Pushe.isInitialized();
+        promise.resolve(initialized);
     }
 
     @ReactMethod
     public void onRegisterationComplete(final Promise promise) {
-        try {
-            Pushe.setRegistrationCompleteListener(new Pushe.Callback() {
-                @Override
-                public void onComplete() {
-                    promise.resolve(true);
-                }
-            });
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        Pushe.setRegistrationCompleteListener(new Pushe.Callback() {
+            @Override
+            public void onComplete() {
+                promise.resolve(true);
+            }
+        });
     }
 
     @ReactMethod
     public void onInitializationComplete(final Promise promise) {
-        try {
-            Pushe.setInitializationCompleteListener(new Pushe.Callback() {
-                @Override
-                public void onComplete() {
-                    promise.resolve(true);
-                }
-            });
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        Pushe.setInitializationCompleteListener(new Pushe.Callback() {
+            @Override
+            public void onComplete() {
+                promise.resolve(true);
+            }
+        });
     }
 
     @ReactMethod
     public void subscribeToTopic(final String topic, final Promise promise) {
-        try {
-            Pushe.subscribeToTopic(topic, new Pushe.Callback() {
-                @Override
-                public void onComplete() {
-                    promise.resolve(true);
-                }
-            });
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        Pushe.subscribeToTopic(topic, new Pushe.Callback() {
+            @Override
+            public void onComplete() {
+                promise.resolve(true);
+            }
+        });
     }
 
     @Deprecated
@@ -130,172 +147,104 @@ public class RNPushe extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void unsubscribeFromTopic(final String topic, final Promise promise) {
-        try {
-            Pushe.unsubscribeFromTopic(topic, new Pushe.Callback() {
-                @Override
-                public void onComplete() {
-                    promise.resolve(true);
-                }
-            });
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        Pushe.unsubscribeFromTopic(topic, new Pushe.Callback() {
+            @Override
+            public void onComplete() {
+                promise.resolve(true);
+            }
+        });
     }
 
     @Deprecated
     @ReactMethod
     public void unsubscribe(final String topic, final Promise promise) {
-        subscribeToTopic(topic, promise);
+        unsubscribeFromTopic(topic, promise);
     }
 
     @ReactMethod
     public void getGoogleAdvertisingId(final Promise promise) {
-        try {
-            String googleAddvertisingId = Pushe.getGoogleAdvertisingId();
-            promise.resolve(googleAddvertisingId);
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        String googleAdvertisingId = Pushe.getGoogleAdvertisingId();
+        promise.resolve(googleAdvertisingId);
     }
 
     @ReactMethod
     public void getAndroidId(final Promise promise) {
-        try {
-            String androidId = Pushe.getAndroidId();
-            promise.resolve(androidId);
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        String androidId = Pushe.getAndroidId();
+        promise.resolve(androidId);
     }
 
     @ReactMethod
     public void setCustomId(@Nullable String id, final Promise promise) {
-        try {
-            Pushe.setCustomId(id);
-            promise.resolve(true);
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        Pushe.setCustomId(id);
+        promise.resolve(true);
     }
 
 
     @ReactMethod
     public void getCustomId(final Promise promise) {
-        try {
-            String customId = Pushe.getCustomId();
-            promise.resolve(customId);
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        String customId = Pushe.getCustomId();
+        promise.resolve(customId);
     }
 
     @ReactMethod
     public void setUserEmail(@Nullable String email, final Promise promise) {
-        try {
-            Boolean result = Pushe.setUserEmail(email);
-            promise.resolve(result);
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        Boolean result = Pushe.setUserEmail(email);
+        promise.resolve(result);
     }
 
     @ReactMethod
     public void getUserEmail(final Promise promise) {
-        try {
-            String email = Pushe.getUserEmail();
-            promise.resolve(email);
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        String email = Pushe.getUserEmail();
+        promise.resolve(email);
     }
 
     @ReactMethod
     public void setUserPhoneNumber(@Nullable String phoneNumber, final Promise promise) {
-        try {
-            Boolean result = Pushe.setUserPhoneNumber(phoneNumber);
-            promise.resolve(result);
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        Boolean result = Pushe.setUserPhoneNumber(phoneNumber);
+        promise.resolve(result);
     }
 
     @ReactMethod
     public void getUserPhoneNumber(final Promise promise) {
-        try {
-            String phoneNumber = Pushe.getUserPhoneNumber();
-            promise.resolve(phoneNumber);
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        String phoneNumber = Pushe.getUserPhoneNumber();
+        promise.resolve(phoneNumber);
     }
 
-    PusheNotification pusheNotification = (PusheNotification) Pushe.getPusheService(Pushe.NOTIFICATION);
 
     @ReactMethod
     public void enableNotifications(final Promise promise) {
-        try {
-            pusheNotification.enableNotifications();
-            promise.resolve(true);
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        pusheNotification.enableNotifications();
+        promise.resolve(true);
     }
 
     @ReactMethod
     public void disableNotifications(final Promise promise) {
-        try {
-            pusheNotification.disableNotifications();
-            promise.resolve(true);
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        pusheNotification.disableNotifications();
+        promise.resolve(true);
     }
 
     @ReactMethod
     public void isNotificationEnable(final Promise promise) {
-        try {
-            Boolean isEnabled = pusheNotification.isNotificationEnable();
-            promise.resolve(isEnabled);
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        Boolean isEnabled = pusheNotification.isNotificationEnable();
+        promise.resolve(isEnabled);
     }
 
     @ReactMethod
     public void enableCustomSound(final Promise promise) {
-        try {
-            pusheNotification.enableCustomSound();
-            promise.resolve(true);
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        pusheNotification.enableCustomSound();
+        promise.resolve(true);
     }
 
     @ReactMethod
     public void disableCustomSound(final Promise promise) {
-        try {
-            pusheNotification.disableCustomSound();
-            promise.resolve(true);
-        } catch (Exception e) {
-            promise.reject(e);
-        }
+        pusheNotification.disableCustomSound();
+        promise.resolve(true);
     }
 
     @ReactMethod
     public void isCustomSoundEnable(final Promise promise) {
-        try {
-            Boolean isEnabled = pusheNotification.isCustomSoundEnable();
-            promise.resolve(isEnabled);
-        } catch (Exception e) {
-            promise.reject(e);
-        }
-    }
-
-
-    public enum SEND_NOTIFICATION_TYPE {
-        CUSTOM_ID,
-        ANDROID_ID,
-        ADVERTISEMENT_ID
+        Boolean isEnabled = pusheNotification.isCustomSoundEnable();
+        promise.resolve(isEnabled);
     }
 
 
@@ -303,11 +252,11 @@ public class RNPushe extends ReactContextBaseJavaModule {
     public void sendNotification(String type, String id, String title, String content, final Promise promise) {
         UserNotification userNotification;
         try {
-            if (type.equals(SEND_NOTIFICATION_TYPE.CUSTOM_ID.toString())) {
+            if (SEND_NOTIFICATION_TYPE.CUSTOM_ID.is(type)) {
                 userNotification = UserNotification.withCustomId(id).setTitle(title).setContent(content);
-            } else if (type.equals(SEND_NOTIFICATION_TYPE.ANDROID_ID.toString())) {
+            } else if (SEND_NOTIFICATION_TYPE.ANDROID_ID.is(type)) {
                 userNotification = UserNotification.withAndroidId(id).setTitle(title).setContent(content);
-            } else if (type.equals(SEND_NOTIFICATION_TYPE.ADVERTISEMENT_ID.toString())) {
+            } else if (SEND_NOTIFICATION_TYPE.ADVERTISEMENT_ID.is(type)) {
                 userNotification = UserNotification.withAdvertisementId(id).setTitle(title).setContent(content);
             } else {
                 promise.reject(new Exception("Send notification type is not valid"));
@@ -324,11 +273,11 @@ public class RNPushe extends ReactContextBaseJavaModule {
     public void sendNotification(String type, String id, String advancedNotification, final Promise promise) {
         UserNotification userNotification;
         try {
-            if (type.equals(SEND_NOTIFICATION_TYPE.CUSTOM_ID.toString())) {
+            if (SEND_NOTIFICATION_TYPE.CUSTOM_ID.is(type)) {
                 userNotification = UserNotification.withCustomId(id).setAdvancedNotification(advancedNotification);
-            } else if (type.equals(SEND_NOTIFICATION_TYPE.ANDROID_ID.toString())) {
+            } else if (SEND_NOTIFICATION_TYPE.ANDROID_ID.is(type)) {
                 userNotification = UserNotification.withAndroidId(id).setAdvancedNotification(advancedNotification);
-            } else if (type.equals(SEND_NOTIFICATION_TYPE.ADVERTISEMENT_ID.toString())) {
+            } else if (SEND_NOTIFICATION_TYPE.ADVERTISEMENT_ID.is(type)) {
                 userNotification = UserNotification.withAdvertisementId(id).setAdvancedNotification(advancedNotification);
             } else {
                 promise.reject(new Exception("Send notification type is not valid"));
@@ -357,6 +306,8 @@ public class RNPushe extends ReactContextBaseJavaModule {
             } catch (Exception e) {
                 promise.reject(e);
             }
+        } else {
+            promise.reject(new Exception("Notification Channel is only supported in Api 26 or higher."));
         }
     }
 
@@ -369,81 +320,97 @@ public class RNPushe extends ReactContextBaseJavaModule {
             } catch (Exception e) {
                 promise.reject(e);
             }
+        } else {
+            promise.reject(new Exception("Notification Channel is only supported in Api 26 or higher."));
         }
     }
 
-    private void initializeNotificationCallbacks(final Context context) {
-        PusheNotification pusheNotification = (PusheNotification) Pushe.getPusheService(Pushe.NOTIFICATION);
+    private WritableMap getWritableMapFromNotificationData(NotificationData notificationData) throws JSONException {
+        return jsonToWritableMap(getNotificationJson(notificationData));
+    }
 
+    private void startHeadlessJsTask(Intent intent, String eventType) {
+        intent.putExtra("event", eventType);
+
+        reactContext.startService(intent);
+        HeadlessJsTaskService.acquireWakeLockNow(reactContext);
+    }
+
+    private void initializeNotificationCallbacks() {
         if (pusheNotification == null) {
-            Log.e("PusheReactNative", "Cannot get PusheNotification");
-            return;
+            pusheNotification = (PusheNotification) Pushe.getPusheService(Pushe.NOTIFICATION);
         }
-
-        final boolean appOnForeground = isAppOnForeground(reactContext);
 
         pusheNotification.setNotificationListener(new PusheNotificationListener() {
             @Override
             public void onNotification(@NonNull NotificationData notificationData) {
-                Intent intent = getNotificationIntent(context, notificationData);
 
-                if (appOnForeground) {
-                    sendEvent("Pushe-NotificationReceived", intent.getExtras());
+                if (isAppOnForeground) {
+                    try {
+                        sendEvent(EVENTS_TYPES.RECEIVED.getBroadcast(), getWritableMapFromNotificationData(notificationData));
+                    } catch (JSONException e) {
+                        Log.e("Pushe", e.toString());
+                    }
+
                 } else {
-                    intent.putExtra("EVENT_TYPE", EVENT_TYPE.NOTIFICATION.toString());
-
-                    context.startService(intent);
-                    HeadlessJsTaskService.acquireWakeLockNow(context);
+                    Intent intent = getNotificationIntent(reactContext, notificationData);
+                    startHeadlessJsTask(intent, EVENTS_TYPES.RECEIVED.getEvent());
                 }
             }
 
             @Override
             public void onCustomContentNotification(@NonNull Map<String, Object> map) {
-                if (appOnForeground) {
-                    sendEvent("Pushe-CustomContentReceived", "aaa");
+                if (isAppOnForeground) {
+                    try {
+                        sendEvent(EVENTS_TYPES.CUSTOM_CONTENT_RECEIVED.getBroadcast(), jsonToWritableMap((JSONObject) new RNPusheJson().mapToJson(map)));
+                    } catch (JSONException e) {
+                        Log.e("Pushe", e.toString());
+                    }
                 } else {
-                    Intent intent = new Intent(context, RNPusheNotificationService.class);
+                    Intent intent = new Intent(reactContext, RNPusheNotificationService.class);
                     intent.putExtra("customContent", mapToBundle(map));
-                    intent.putExtra("EVENT_TYPE", EVENT_TYPE.CUSTOM_CONTENT.toString());
-
-                    context.startService(intent);
-                    HeadlessJsTaskService.acquireWakeLockNow(context);
+                    startHeadlessJsTask(intent, EVENTS_TYPES.CUSTOM_CONTENT_RECEIVED.getEvent());
                 }
             }
 
             @Override
             public void onNotificationClick(@NonNull NotificationData notificationData) {
-                if (appOnForeground) {
-                    sendEvent("Pushe-Clicked", "aaa");
+                if (isAppOnForeground) {
+                    try {
+                        sendEvent(EVENTS_TYPES.CLICKED.getBroadcast(), getWritableMapFromNotificationData(notificationData));
+                    } catch (JSONException e) {
+                        Log.e("Pushe", e.toString());
+                    }
                 } else {
-                    Intent intent = getNotificationIntent(context, notificationData);
-                    intent.putExtra("EVENT_TYPE", EVENT_TYPE.CLICK.toString());
-
-                    context.startService(intent);
-                    HeadlessJsTaskService.acquireWakeLockNow(context);
+                    Intent intent = getNotificationIntent(reactContext, notificationData);
+                    startHeadlessJsTask(intent, EVENTS_TYPES.CLICKED.getEvent());
                 }
             }
 
             @Override
             public void onNotificationDismiss(@NonNull NotificationData notificationData) {
-                if (appOnForeground) {
-                    sendEvent("Pushe-Dismissed", "aaa");
+                if (isAppOnForeground) {
+                    try {
+                        sendEvent(EVENTS_TYPES.DISMISSED.getBroadcast(), getWritableMapFromNotificationData(notificationData));
+                    } catch (JSONException e) {
+                        Log.e("Pushe", e.toString());
+                    }
                 } else {
-                    Intent intent = getNotificationIntent(context, notificationData);
-                    intent.putExtra("EVENT_TYPE", EVENT_TYPE.DISMISS.toString());
-
-                    context.startService(intent);
-                    HeadlessJsTaskService.acquireWakeLockNow(context);
+                    Intent intent = getNotificationIntent(reactContext, notificationData);
+                    startHeadlessJsTask(intent, EVENTS_TYPES.DISMISSED.getEvent());
                 }
             }
 
             @Override
             public void onNotificationButtonClick(@NonNull NotificationButtonData notificationButtonData, @NonNull NotificationData notificationData) {
-                if (appOnForeground) {
-                    sendEvent("Pushe-ButtonClicked", "aaa");
+                if (isAppOnForeground) {
+                    try {
+                        sendEvent(EVENTS_TYPES.BUTTON_CLICKED.getBroadcast(), jsonToWritableMap(getNotificationJson(notificationData)));
+                    } catch (JSONException e) {
+                        Log.e("Pushe", e.toString());
+                    }
                 } else {
-                    Intent intent = getNotificationIntent(context, notificationData);
-                    intent.putExtra("EVENT_TYPE", EVENT_TYPE.BUTTON_CLICK.toString());
+                    Intent intent = getNotificationIntent(reactContext, notificationData);
 
                     Map<String, Object> map = new HashMap<>();
                     map.put("id", notificationButtonData.getId());
@@ -452,11 +419,25 @@ public class RNPushe extends ReactContextBaseJavaModule {
                     Bundle bundle = mapToBundle(map);
                     intent.putExtra("notificationButtonData", bundle);
 
-                    context.startService(intent);
-                    HeadlessJsTaskService.acquireWakeLockNow(context);
+                    startHeadlessJsTask(intent, EVENTS_TYPES.BUTTON_CLICKED.getEvent());
                 }
             }
         });
+    }
+
+    @Override
+    public void onHostResume() {
+        isAppOnForeground = true;
+    }
+
+    @Override
+    public void onHostPause() {
+        isAppOnForeground = false;
+    }
+
+    @Override
+    public void onHostDestroy() {
+        isAppOnForeground = false;
     }
 
 }

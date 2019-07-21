@@ -1,5 +1,5 @@
 
-import { NativeModules, NativeEventEmitter } from 'react-native';
+import { NativeModules, NativeEventEmitter, AppRegistry } from 'react-native';
 import invariant from "invariant";
 
 const { RNPushe } = NativeModules;
@@ -28,7 +28,7 @@ function handleEventBroadcast(type, broadcast) {
         // else cache notification until handler is being set
 
         let handler = _handlerBaseType.get(type);
-
+        console.log("in handleEventBroadcast", type, broadcast, notification);
         if (handler) {
             handler(notification);
         } else {
