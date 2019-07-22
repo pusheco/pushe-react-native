@@ -5,11 +5,15 @@
   "scripts": {
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
+    "rn": "yarn android && react-native run-android --no-jetifier"
   },
   "dependencies": {
+    "@react-native-community/cli": "^2.7.0",
+    "@react-native-community/cli-platform-android": "^2.7.0",
     "react": "16.8.6",
-    "react-native": "0.60.4"
+    "react-native": "^0.60.0-rc.3"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -16,11 +15,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
-import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,14 +27,14 @@ import co.pushe.plus.notification.NotificationData;
 import co.pushe.plus.notification.PusheNotification;
 import co.pushe.plus.notification.PusheNotificationListener;
 import co.pushe.plus.notification.UserNotification;
-import co.pushe.plus.utils.RNPusheJson;
 import co.pushe.plus.utils.RNPusheTypes.EVENTS_TYPES;
 import co.pushe.plus.utils.RNPusheTypes.SEND_NOTIFICATION_TYPE;
 
 import static co.pushe.plus.utils.RNPusheUtils.getNotificationIntent;
-import static co.pushe.plus.utils.RNPusheUtils.getNotificationJson;
-import static co.pushe.plus.utils.RNPusheUtils.jsonToWritableMap;
 import static co.pushe.plus.utils.RNPusheUtils.mapToBundle;
+import static co.pushe.plus.utils.RNPusheUtils.mapToWritableMap;
+import static co.pushe.plus.utils.RNPusheUtils.notificationDataToWritableMap;
+
 
 public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
@@ -325,10 +320,6 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
         }
     }
 
-    private WritableMap getWritableMapFromNotificationData(NotificationData notificationData) throws JSONException {
-        return jsonToWritableMap(getNotificationJson(notificationData));
-    }
-
     private void startHeadlessJsTask(Intent intent, String eventType) {
         intent.putExtra("event", eventType);
 
@@ -346,11 +337,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
             public void onNotification(@NonNull NotificationData notificationData) {
 
                 if (isAppOnForeground) {
-                    try {
-                        sendEvent(EVENTS_TYPES.RECEIVED.getBroadcast(), getWritableMapFromNotificationData(notificationData));
-                    } catch (JSONException e) {
-                        Log.e("Pushe", e.toString());
-                    }
+                    sendEvent(EVENTS_TYPES.RECEIVED.getBroadcast(), notificationDataToWritableMap(notificationData));
 
                 } else {
                     Intent intent = getNotificationIntent(reactContext, notificationData);
@@ -361,11 +348,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
             @Override
             public void onCustomContentNotification(@NonNull Map<String, Object> map) {
                 if (isAppOnForeground) {
-                    try {
-                        sendEvent(EVENTS_TYPES.CUSTOM_CONTENT_RECEIVED.getBroadcast(), jsonToWritableMap((JSONObject) new RNPusheJson().mapToJson(map)));
-                    } catch (JSONException e) {
-                        Log.e("Pushe", e.toString());
-                    }
+                    sendEvent(EVENTS_TYPES.CUSTOM_CONTENT_RECEIVED.getBroadcast(), mapToWritableMap(map));
                 } else {
                     Intent intent = new Intent(reactContext, RNPusheNotificationService.class);
                     intent.putExtra("customContent", mapToBundle(map));
@@ -376,11 +359,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
             @Override
             public void onNotificationClick(@NonNull NotificationData notificationData) {
                 if (isAppOnForeground) {
-                    try {
-                        sendEvent(EVENTS_TYPES.CLICKED.getBroadcast(), getWritableMapFromNotificationData(notificationData));
-                    } catch (JSONException e) {
-                        Log.e("Pushe", e.toString());
-                    }
+                    sendEvent(EVENTS_TYPES.CLICKED.getBroadcast(), notificationDataToWritableMap(notificationData));
                 } else {
                     Intent intent = getNotificationIntent(reactContext, notificationData);
                     startHeadlessJsTask(intent, EVENTS_TYPES.CLICKED.getEvent());
@@ -390,11 +369,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
             @Override
             public void onNotificationDismiss(@NonNull NotificationData notificationData) {
                 if (isAppOnForeground) {
-                    try {
-                        sendEvent(EVENTS_TYPES.DISMISSED.getBroadcast(), getWritableMapFromNotificationData(notificationData));
-                    } catch (JSONException e) {
-                        Log.e("Pushe", e.toString());
-                    }
+                    sendEvent(EVENTS_TYPES.DISMISSED.getBroadcast(), notificationDataToWritableMap(notificationData));
                 } else {
                     Intent intent = getNotificationIntent(reactContext, notificationData);
                     startHeadlessJsTask(intent, EVENTS_TYPES.DISMISSED.getEvent());
@@ -404,11 +379,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
             @Override
             public void onNotificationButtonClick(@NonNull NotificationButtonData notificationButtonData, @NonNull NotificationData notificationData) {
                 if (isAppOnForeground) {
-                    try {
-                        sendEvent(EVENTS_TYPES.BUTTON_CLICKED.getBroadcast(), jsonToWritableMap(getNotificationJson(notificationData)));
-                    } catch (JSONException e) {
-                        Log.e("Pushe", e.toString());
-                    }
+                    sendEvent(EVENTS_TYPES.BUTTON_CLICKED.getBroadcast(), notificationDataToWritableMap(notificationData));
                 } else {
                     Intent intent = getNotificationIntent(reactContext, notificationData);
 

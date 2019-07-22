@@ -5,94 +5,92 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.List;
+import java.util.Map;
 
-import java.util.Iterator;
-
-import javax.annotation.Nullable;
+import co.pushe.plus.notification.NotificationButtonData;
+import co.pushe.plus.notification.NotificationData;
 
 public class RNPusheWritable {
 
-    @Nullable
-    public static WritableMap jsonToWritableMap(JSONObject jsonObject) throws JSONException {
+    public WritableArray listToWritableArray(List list) {
+        WritableArray writableArray = new WritableNativeArray();
+
+        for (Object value : list) {
+            if (value instanceof String) {
+                writableArray.pushString((String) value);
+            } else if (value instanceof Integer) {
+                writableArray.pushInt((Integer) value);
+            } else if (value instanceof Float || value instanceof Double) {
+                writableArray.pushDouble((Double) value);
+            } else if (value instanceof Boolean) {
+                writableArray.pushBoolean((Boolean) value);
+            } else if (value instanceof Map) {
+                writableArray.pushMap(mapToWritableMap((Map) value));
+            } else if (value instanceof List) {
+                writableArray.pushArray(listToWritableArray((List) value));
+            }
+        }
+
+        return writableArray;
+    }
+
+
+    public WritableMap mapToWritableMap(Map<String, Object> map) {
         WritableMap writableMap = new WritableNativeMap();
 
-        if (jsonObject == null) {
-            return null;
-        }
+        for (String key : map.keySet()) {
+            Object object = map.get(key);
 
-
-        Iterator<String> iterator = jsonObject.keys();
-        if (!iterator.hasNext()) {
-            return null;
-        }
-
-        while (iterator.hasNext()) {
-            String key = iterator.next();
-
-            try {
-                Object value = jsonObject.get(key);
-
-                if (value == null) {
-                    writableMap.putNull(key);
-                } else if (value instanceof Boolean) {
-                    writableMap.putBoolean(key, (Boolean) value);
-                } else if (value instanceof Integer) {
-                    writableMap.putInt(key, (Integer) value);
-                } else if (value instanceof Double) {
-                    writableMap.putDouble(key, (Double) value);
-                } else if (value instanceof String) {
-                    writableMap.putString(key, (String) value);
-                } else if (value instanceof JSONObject) {
-                    writableMap.putMap(key, jsonToWritableMap((JSONObject) value));
-                } else if (value instanceof JSONArray) {
-                    writableMap.putArray(key, jsonArrayToWritableArray((JSONArray) value));
-                }
-            } catch (JSONException ex) {
-                // Do nothing and fail silently
+            if (object instanceof Map) {
+                writableMap.putMap(key, mapToWritableMap((Map) object));
+            } else if (object instanceof List) {
+                writableMap.putArray(key, listToWritableArray((List) object));
+            } else if (object instanceof String) {
+                writableMap.putString(key, (String) object);
+            } else if (object instanceof Boolean) {
+                writableMap.putBoolean(key, (Boolean) object);
+            } else if (object instanceof Float || object instanceof Double) {
+                writableMap.putDouble(key, (Double) object);
+            } else if (object instanceof Integer) {
+                writableMap.putInt(key, (Integer) object);
             }
         }
 
         return writableMap;
     }
 
-    @Nullable
-    public static WritableArray jsonArrayToWritableArray(JSONArray jsonArray) {
-        WritableArray writableArray = new WritableNativeArray();
 
-        if (jsonArray == null) {
-            return null;
+    public WritableMap notificationDataToWritableMap(NotificationData notificationData) {
+        WritableMap writableMap = new WritableNativeMap();
+
+        writableMap.putString("title", notificationData.getTitle());
+        writableMap.putString("summary", notificationData.getSummary());
+        writableMap.putString("messageId", notificationData.getMessageId());
+        writableMap.putString("imageUrl", notificationData.getImageUrl());
+        writableMap.putString("iconUrl", notificationData.getIconUrl());
+
+        if (notificationData.getCustomContent() != null) {
+            writableMap.putMap("customContent", mapToWritableMap(notificationData.getCustomContent()));
         }
 
-        if (jsonArray.length() <= 0) {
-            return null;
+        writableMap.putString("content", notificationData.getContent());
+
+        WritableArray buttonData = new WritableNativeArray();
+        for (NotificationButtonData button : notificationData.getButtons()) {
+            WritableMap map = new WritableNativeMap();
+            map.putString("id", button.getId());
+            map.putString("icon", button.getIcon());
+            map.putString("text", button.getText());
+            buttonData.pushMap(map);
         }
 
-        for (int i = 0; i < jsonArray.length(); i++) {
-            try {
-                Object value = jsonArray.get(i);
-                if (value == null) {
-                    writableArray.pushNull();
-                } else if (value instanceof Boolean) {
-                    writableArray.pushBoolean((Boolean) value);
-                } else if (value instanceof Integer) {
-                    writableArray.pushInt((Integer) value);
-                } else if (value instanceof Double) {
-                    writableArray.pushDouble((Double) value);
-                } else if (value instanceof String) {
-                    writableArray.pushString((String) value);
-                } else if (value instanceof JSONObject) {
-                    writableArray.pushMap(jsonToWritableMap((JSONObject) value));
-                } else if (value instanceof JSONArray) {
-                    writableArray.pushArray(jsonArrayToWritableArray((JSONArray) value));
-                }
-            } catch (JSONException e) {
-                // Do nothing and fail silently
-            }
-        }
+        writableMap.putArray("buttons", buttonData);
+        writableMap.putString("bigTitle", notificationData.getBigTitle());
+        writableMap.putString("bigIconUrl", notificationData.getBigIconUrl());
+        writableMap.putString("bigContent", notificationData.getBigContent());
 
-        return writableArray;
+        return writableMap;
     }
+
 }
