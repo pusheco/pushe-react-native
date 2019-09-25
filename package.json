@@ -1,0 +1,37 @@
+{
+  "name": "pushe-react-native",
+  "title": "Pushe React Native",
+  "version": "1.0.0",
+  "native_sdk_version": "1.6.3",
+  "description": "Pushe.co's official react native module based on pushe's native sdk v1.x",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:pusheco/pushe-react-native.git",
+    "baseUrl": "https://github.com/pusheco/pushe-react-native"
+  },
+  "keywords": [
+    "react-native",
+    "pushe.co",
+    "pushe",
+    "pushe notification"
+  ],
+  "author": {
+    "name": "pushe.co",
+    "email": "info@pushe.co"
+  },
+  "license": "MIT",
+  "licenseFilename": "LICENSE",
+  "readmeFilename": "README.md",
+  "peerDependencies": {
+    "react": "^16.8.1",
+    "react-native": ">=0.59.0-rc.0 <1.0.x"
+  },
+  "devDependencies": {
+    "react": "^16.8.3",
+    "react-native": "^0.59.10"
+  }
+}
