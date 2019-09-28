@@ -2,7 +2,6 @@ package co.ronash.pushe;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
 
 import com.facebook.react.HeadlessJsTaskService;
 import com.facebook.react.bridge.LifecycleEventListener;
@@ -113,7 +112,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
     }
 
     @ReactMethod
-    public void sendNotificationJsonToUser(String pusheId, String json, Promise promise) {
+    public void sendCustomJsonToUser(String pusheId, String json, Promise promise) {
         try {
             Pushe.sendCustomJsonToUser(reactContext, pusheId, json);
             promise.resolve(true);
@@ -154,7 +153,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
     public void initializeNotificationListeners() {
         Pushe.setNotificationListener(new Pushe.NotificationListener() {
             @Override
-            public void onNotificationReceived(@NonNull NotificationData notificationData) {
+            public void onNotificationReceived(NotificationData notificationData) {
                 if (isAppOnForeground) {
                     sendEvent(RNPusheTypes.EVENTS_TYPES.RECEIVED.getBroadcast(), new RNPusheWritable().notificationDataToWritableMap(notificationData));
                 } else {
@@ -164,7 +163,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
             }
 
             @Override
-            public void onNotificationClicked(@NonNull NotificationData notificationData) {
+            public void onNotificationClicked(NotificationData notificationData) {
                 if (isAppOnForeground) {
                     sendEvent(RNPusheTypes.EVENTS_TYPES.CLICKED.getBroadcast(), new RNPusheWritable().notificationDataToWritableMap(notificationData));
                 } else {
@@ -174,7 +173,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
             }
 
             @Override
-            public void onNotificationButtonClicked(@NonNull NotificationData notificationData, @NonNull NotificationButtonData notificationButtonData) {
+            public void onNotificationButtonClicked(NotificationData notificationData, NotificationButtonData notificationButtonData) {
                 if (isAppOnForeground) {
                     sendEvent(RNPusheTypes.EVENTS_TYPES.BUTTON_CLICKED.getBroadcast(), new RNPusheWritable().notificationDataToWritableMap(notificationData));
                 } else {
@@ -191,7 +190,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
             }
 
             @Override
-            public void onCustomContentReceived(@NonNull JSONObject customContent) {
+            public void onCustomContentReceived(JSONObject customContent) {
                 if (isAppOnForeground) {
                     sendEvent(RNPusheTypes.EVENTS_TYPES.CUSTOM_CONTENT_RECEIVED.getBroadcast(), customContent.toString());
                 } else {
@@ -202,7 +201,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
             }
 
             @Override
-            public void onNotificationDismissed(@NonNull NotificationData notificationData) {
+            public void onNotificationDismissed(NotificationData notificationData) {
                 if (isAppOnForeground) {
                     sendEvent(RNPusheTypes.EVENTS_TYPES.DISMISSED.getBroadcast(), new RNPusheWritable().notificationDataToWritableMap(notificationData));
                 } else {
@@ -218,7 +217,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
     }
 
     private void startHeadlessJsTask(Intent intent, String eventType) {
-        intent.putExtra("event", eventType);
+        intent.putExtra("EVENT_TYPE", eventType);
 
         reactContext.startService(intent);
         HeadlessJsTaskService.acquireWakeLockNow(reactContext);

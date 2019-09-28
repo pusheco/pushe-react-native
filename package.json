@@ -1,9 +1,9 @@
 {
   "name": "pushe-react-native",
   "title": "Pushe React Native",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "native_sdk_version": "1.6.3",
-  "description": "Pushe.co's official react native module based on pushe's native sdk v1.x",
+  "description": "Pushe.co's official react native module based on pushe.co native sdk",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

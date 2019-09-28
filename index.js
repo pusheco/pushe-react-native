@@ -191,6 +191,18 @@ export default class Pushe {
     }
 
     /**
+     * Send an custom notification with a json object
+     * to another device with pusheId
+     * 
+     * @param {string} pusheId 
+     * @param {string} notificationJson - A json object
+     * @return {Promise<boolean|Error>} Promise - A proimse that resolve to `true` or reject with `Exception`
+     */
+    static sendCustomJsonToUser(pusheId, notificationJson) {
+        return RNPushe.sendCustomJsonToUser(pusheId, notificationJson);
+    }
+
+    /**
      * Create a notification channel (only Android 8.0+)
      * 
      * @param {string} channelId 
