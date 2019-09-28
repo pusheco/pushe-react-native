@@ -1,5 +1,8 @@
 # Pushe React Native Sample App
 
+![""](pushe_demo1.jpg)
+![""](pushe_demo2.jpg)
+
 This is a sample **android** app to showcase all features of **Pushe React Native** module.
 
 Also to be noted that all methods and interfaces of this module are based on **Pushe Native Sdk v1.x**

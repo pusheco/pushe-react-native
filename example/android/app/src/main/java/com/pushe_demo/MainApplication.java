@@ -1,4 +1,4 @@
-package com.pushe_demo;
+package co.ronash.pushe.rnsample;
 
 import android.app.Application;
 import android.util.Log;

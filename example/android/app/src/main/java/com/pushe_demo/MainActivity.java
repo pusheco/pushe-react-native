@@ -1,4 +1,4 @@
-package com.pushe_demo;
+package co.ronash.pushe.rnsample;
 
 import com.facebook.react.ReactActivity;
 
