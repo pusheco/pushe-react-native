@@ -19,9 +19,11 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
+import co.pushe.plus.analytics.PusheAnalytics;
 import co.pushe.plus.notification.NotificationButtonData;
 import co.pushe.plus.notification.NotificationData;
 import co.pushe.plus.notification.PusheNotification;
@@ -29,6 +31,7 @@ import co.pushe.plus.notification.PusheNotificationListener;
 import co.pushe.plus.notification.UserNotification;
 import co.pushe.plus.utils.RNPusheTypes.EVENTS_TYPES;
 import co.pushe.plus.utils.RNPusheTypes.SEND_NOTIFICATION_TYPE;
+import jdk.nashorn.internal.runtime.regexp.joni.constants.Arguments;
 
 import static co.pushe.plus.utils.RNPusheUtils.getNotificationIntent;
 import static co.pushe.plus.utils.RNPusheUtils.mapToBundle;
@@ -49,6 +52,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
 
 
     PusheNotification pusheNotification;
+    PusheAnalytics pusheAnalytics;
 
     public RNPushe(final ReactApplicationContext reactContext) {
         super(reactContext);
@@ -56,6 +60,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
         this.reactContext.addLifecycleEventListener(this);
 
         pusheNotification = (PusheNotification) Pushe.getPusheService(Pushe.NOTIFICATION);
+        pusheAnalytics = (PusheAnalytics) Pushe.getPusheService(Pushe.ANALYTICS);
 
         // This calls to initializeNotificationCallbacks is used when app is in foreground
         this.initializeNotificationCallbacks();
@@ -150,10 +155,52 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
         });
     }
 
+    @ReactMethod
+    public void getSubscribedTopics(final Promise promise) {
+        List<String> topics = Pushe.getSubscribedTopics();
+        WritableArray array = new WritableNativeArray();
+        for (String item :
+                topics) {
+            array.putString(array);
+        }
+        promise.resolve(array);
+    }
+
+    @ReactMethod
+    public void addTags(final WritableMap<String, String> tags, final Promise promise) {
+        Pushe.addTags(tags);
+        promise.resolve(true);
+    }
+
+    @ReactMethod
+    public void removeTags(final ReadbleArray list, final Promise promise) {
+        Pushe.removeTags(list.toArrayList());
+        promise.resolve(true);
+    }
+
+    @ReactMethod
+    public void getSubscribedTags(final Promise promise) {
+        WritableMap writableMap = new WritableNativeMap();
+        Map<String, String> map = Pushe.getSubscribedTags();
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            writableMap.putString(entry.getKey(), entry.getValue());
+        }
+
+        promise.resolve(writableMap);
+    }
+
     @Deprecated
     @ReactMethod
     public void unsubscribe(final String topic, final Promise promise) {
         unsubscribeFromTopic(topic, promise);
+    }
+
+    @Deprecated
+    @ReactMethod
+    public void getPusheId(final Promise promise)
+    {
+        String pusheId = Pushe.getPusheId();
+        promise.resolve(pusheId);
     }
 
     @ReactMethod
@@ -318,6 +365,20 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
         } else {
             promise.reject(new Exception("Notification Channel is only supported in Api 26 or higher."));
         }
+    }
+
+    @ReactMethod
+    public void sendEcommerceData(String name,Number price,final Promise promise)
+    {
+        pusheAnalytics.sendEcommerceData(name,price);
+        promise.resolve(true);
+    }
+
+    @ReactMethod
+    public void sendEvent(String name, final Promise promise)
+    {
+        pusheAnalytics.sendEvent(name);
+        promise.resolve(true);
     }
 
     private void startHeadlessJsTask(Intent intent, String eventType) {
