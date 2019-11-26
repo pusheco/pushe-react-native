@@ -247,7 +247,7 @@ class Pushe {
 
     /**
      * 
-     * @param {WritableMap<String,String>} tags 
+     * @param {object} tags - Object of key: string, value: string
      */
     static addTags(tags)
     {
@@ -256,7 +256,7 @@ class Pushe {
 
     /**
      * 
-     * @param {ReadbleArray} list 
+     * @param {list} list - a list of strings
      */
     static removeTags(list)
     {
@@ -390,7 +390,6 @@ class Pushe {
     {
         return RNPushe.sendEvent(name);
     }
-
 
     
 }

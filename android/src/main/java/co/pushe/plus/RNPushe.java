@@ -15,6 +15,9 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableNativeArray;
+import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import java.util.HashMap;
@@ -31,12 +34,14 @@ import co.pushe.plus.notification.PusheNotificationListener;
 import co.pushe.plus.notification.UserNotification;
 import co.pushe.plus.utils.RNPusheTypes.EVENTS_TYPES;
 import co.pushe.plus.utils.RNPusheTypes.SEND_NOTIFICATION_TYPE;
-import jdk.nashorn.internal.runtime.regexp.joni.constants.Arguments;
 
 import static co.pushe.plus.utils.RNPusheUtils.getNotificationIntent;
 import static co.pushe.plus.utils.RNPusheUtils.mapToBundle;
 import static co.pushe.plus.utils.RNPusheUtils.mapToWritableMap;
 import static co.pushe.plus.utils.RNPusheUtils.notificationDataToWritableMap;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
+
 
 
 public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEventListener {
@@ -161,20 +166,21 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
         WritableArray array = new WritableNativeArray();
         for (String item :
                 topics) {
-            array.putString(array);
+            array.pushString(item);
         }
         promise.resolve(array);
     }
 
     @ReactMethod
-    public void addTags(final WritableMap<String, String> tags, final Promise promise) {
-        Pushe.addTags(tags);
+    public void addTags(final ReadableMap tags, final Promise promise) {
+
+        Pushe.addTags((Map) tags.toHashMap());
         promise.resolve(true);
     }
 
     @ReactMethod
-    public void removeTags(final ReadbleArray list, final Promise promise) {
-        Pushe.removeTags(list.toArrayList());
+    public void removeTags(final ReadableArray list, final Promise promise) {
+        Pushe.removeTags((List) list.toArrayList());
         promise.resolve(true);
     }
 
@@ -368,7 +374,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
     }
 
     @ReactMethod
-    public void sendEcommerceData(String name,Number price,final Promise promise)
+    public void sendEcommerceData(String name,Double price,final Promise promise)
     {
         pusheAnalytics.sendEcommerceData(name,price);
         promise.resolve(true);
