@@ -2,7 +2,7 @@
 import { NativeModules, NativeEventEmitter, AppRegistry } from 'react-native';
 import invariant from "invariant";
 
-const { RNPushe } = NativeModules;
+const { Pushe: RNPushe } = NativeModules;
 
 const PusheEventBroadcasts = [
     "Pushe-NotificationReceived",
