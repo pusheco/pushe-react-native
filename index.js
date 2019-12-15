@@ -1,8 +1,8 @@
 
-import { NativeModules, NativeEventEmitter, AppRegistry } from 'react-native';
+import { NativeModules, NativeEventEmitter, Platform, AppRegistry } from 'react-native';
 import invariant from "invariant";
 
-const { Pushe: RNPushe } = NativeModules;
+const { RNPushe } = NativeModules;
 
 const PusheEventBroadcasts = [
     "Pushe-NotificationReceived",
@@ -36,7 +36,7 @@ function handleEventBroadcast(type, broadcast) {
     });
 }
 
-if (isInitilized) {
+if (isInitilized && Platform.OS === 'android') {
     PusheEventEmitter = new NativeEventEmitter(RNPushe);
 
     PusheEventBroadcasts.forEach((eventBroadcast, index) => {
@@ -57,6 +57,7 @@ class Pushe {
 
     static addEventListener(type, handler) {
         if (!isInitilized) return;
+        if (Platform.OS === 'ios') return;
 
         invariant(
             type !== Pushe.events.RECEIVED || type !== Pushe.events.CUSTOM_CONTENT_RECEIVED ||
@@ -76,6 +77,7 @@ class Pushe {
 
     static removeEventListener(type, handler) {
         if (!isInitilized) return;
+        if (Platform.OS === 'ios') return;
 
         invariant(
             type !== Pushe.events.RECEIVED || type !== Pushe.events.CUSTOM_CONTENT_RECEIVED ||
@@ -88,6 +90,7 @@ class Pushe {
 
     static clearListeners() {
         if (!isInitilized) return;
+        if (Platform.OS === 'ios') return;
 
         _eventTypes.forEach((type) => {
             _listeners[type].remove();
@@ -100,6 +103,7 @@ class Pushe {
      * @param {boolean} showGooglePlayDialog 
      */
     static initialize(showGooglePlayDialog = false) {
+        if (Platform.OS === 'ios') return;
         RNPushe.initialize(showGooglePlayDialog);
     }
 
@@ -111,7 +115,7 @@ class Pushe {
      * @return {Promise<boolean>} Promise - if no parameter passed
      */
     static isPusheInitialized() {
-
+        if (Platform.OS === 'ios') return;
         return RNPushe.isInitialized();
     }
 
@@ -123,21 +127,21 @@ class Pushe {
      * @return {Promise<boolean>} Promise - if no parameter passed
      */
     static isPusheisRegistered() {
-
+        if (Platform.OS === 'ios') return;
         return RNPushe.isRegistered();
     }
     /**
      * it will called when push registertion is completed
      */
-    static onPusheRegisterationComplete()
-    {
+    static onPusheRegisterationComplete() {
+        if (Platform.OS === 'ios') return;
         return RNPushe.onRegisterationComplete();
     }
      /**
      * it will called when push initialization is completed
      */
-    static onPusheInitializationComplete()
-    {
+    static onPusheInitializationComplete() {
+        if (Platform.OS === 'ios') return;
         return RNPushe.onInitializationComplete();
     }
 
@@ -149,6 +153,7 @@ class Pushe {
      * @return {Promise<string>} Promise - if no callback passed
      */
     static getPusheId() {
+        if (Platform.OS === 'ios') return;
         return RNPushe.getPusheId();
     }
 
@@ -156,16 +161,16 @@ class Pushe {
      * get advertisingId
      * it will return a promise
      */
-    static getGoogleAdvertisingId()
-    {
+    static getGoogleAdvertisingId() {
+        if (Platform.OS === 'ios') return;
         return RNPushe.getGoogleAdvertisingId();
     }
     /**
      * get androidId
      * it will return a promise
      */
-    static getAndroidId()
-    {
+    static getAndroidId() {
+        if (Platform.OS === 'ios') return;
         return RNPushe.getAndroidId();
     }
     /**
@@ -173,15 +178,15 @@ class Pushe {
      * @param {string} id 
      * @returns promise
      */
-    static setCustomId(id)
-    {
+    static setCustomId(id) {
+        if (Platform.OS === 'ios') return;
         return RNPushe.setCustomId(id);
     }
     /**
      * get custom id
      */
-    static getCustomId()
-    {
+    static getCustomId() {
+        if (Platform.OS === 'ios') return;
         return RNPushe.getCustomId();
     }
 
@@ -189,31 +194,31 @@ class Pushe {
      * set user email
      * @param {String} email 
      */
-    static setUserEmail(email)
-    {
+    static setUserEmail(email) {
+        if (Platform.OS === 'ios') return;
         return RNPushe.setUserEmail(email);
     }
     /**
      * get user email
      */
-    static getUserEmail()
-    {
+    static getUserEmail() {
+        if (Platform.OS === 'ios') return;
         return RNPushe.getUserEmail();
     }
     /**
      * set user phone number
      * @param {String} phone 
      */
-    static setUserPhoneNumber(phone)
-    {
+    static setUserPhoneNumber(phone) {
+        if (Platform.OS === 'ios') return;
         return RNPushe.setUserPhoneNumber(phone);
     }
 
     /**
      * get user phone number
      */
-    static getUserPhoneNumber()
-    {
+    static getUserPhoneNumber() {
+        if (Platform.OS === 'ios') return;
         return RNPushe.getUserPhoneNumber();
     }
 
@@ -224,6 +229,7 @@ class Pushe {
      * @return void
      */
     static subscribeTopic(topicName) {
+        if (Platform.OS === 'ios') return;
         return RNPushe.subscribeToTopic(topicName);
     }
 
@@ -234,14 +240,15 @@ class Pushe {
      * @return void
      */
     static unsubscribeTopic(topicName) {
+        if (Platform.OS === 'ios') return;
         return RNPushe.unsubscribe(topicName);
     }
 
     /**
      * get subscribed topics
      */
-    static getSubscribedTopics()
-    {
+    static getSubscribedTopics() {
+        if (Platform.OS === 'ios') return;
         return RNPushe.getSubscribedTopics();
     }
 
@@ -249,8 +256,8 @@ class Pushe {
      * 
      * @param {object} tags - Object of key: string, value: string
      */
-    static addTags(tags)
-    {
+    static addTags(tags) {
+        if (Platform.OS === 'ios') return;
         return RNPushe.addTags(tags);
     }
 
@@ -258,14 +265,14 @@ class Pushe {
      * 
      * @param {list} list - a list of strings
      */
-    static removeTags(list)
-    {
+    static removeTags(list) {
+        if (Platform.OS === 'ios') return;
         return RNPushe.removeTags(list);
     }
 
 
-    static getSubscribedTags()
-    {
+    static getSubscribedTags() {
+        if (Platform.OS === 'ios') return;
         return RNPushe.getSubscribedTopics();
     }
 
@@ -274,6 +281,7 @@ class Pushe {
      * 
      */
     static setNotificationOff() {
+        if (Platform.OS === 'ios') return;
         return RNPushe.disableNotifications();
     }
 
@@ -282,37 +290,38 @@ class Pushe {
      * 
      */
     static setNotificationOn() {
+        if (Platform.OS === 'ios') return;
         return RNPushe.enableNotifications();
     }
     /**
      * Check weather notification is disabled or not
      */
-    static isNotificationEnable()
-    {
+    static isNotificationEnable() {
+        if (Platform.OS === 'ios') return;
         return RNPushe.isNotificationEnable();
     }
 
     /**
      * enable custom sound
      */
-    static enableCustomSound()
-    {
+    static enableCustomSound() {
+        if (Platform.OS === 'ios') return;
         return RNPushe.enableCustomSound();
     }
 
     /**
      * disble custom sound
      */
-    static disableCustomSound()
-    {
+    static disableCustomSound() {
+        if (Platform.OS === 'ios') return;
         return RNPushe.disableCustomSound();
     }
 
     /**
      * Check weather custom sound is disbled or not
      */
-    static isCustomSoundEnable()
-    {
+    static isCustomSoundEnable() {
+        if (Platform.OS === 'ios') return;
         return RNPushe.isCustomSoundEnable();
     }
 
@@ -326,6 +335,7 @@ class Pushe {
      * @return void
      */
     static sendSimpleNotifToUser(type,pusheId, title, content) {
+        if (Platform.OS === 'ios') return;
         RNPushe.sendNotification(type,pusheId, title, content);
     }
 
@@ -339,6 +349,7 @@ class Pushe {
      * @return {Promise<boolean|Error>} Promise - A proimse that resolve to `true` or reject with `Exception`
      */
     static sendAdvancedNotifToUser(type,pusheId, notificationJson) {
+        if (Platform.OS === 'ios') return;
         return RNPushe.sendAdvancedNotifToUser(type,pusheId, notificationJson);
     }
 
@@ -351,6 +362,7 @@ class Pushe {
      * @return {Promise<boolean|Error>} Promise - A proimse that resolve to `true` or reject with `Exception`
      */
     static sendCustomJsonToUser(pusheId, notificationJson) {
+        if (Platform.OS === 'ios') return;
         return RNPushe.sendCustomJsonToUser(pusheId, notificationJson);
     }
 
@@ -369,6 +381,7 @@ class Pushe {
      * @return void
      */
     static createNotificationChannel(...params) {
+        if (Platform.OS === 'ios') return;
         return RNPushe.createNotificationChannel(...params);
     }
 
@@ -378,20 +391,51 @@ class Pushe {
      * @param {string} channelId 
      */
     static removeNotificationChannel(channelId) {
+        if (Platform.OS === 'ios') return;
         return RNPushe.removeNotificationChannel(channelId);
     }
 
-    static sendEcommerceData(name,price)
-    {
+    static sendEcommerceData(name,price) {
+        if (Platform.OS === 'ios') return;
         return RNPushe.sendEcommerceData(name,price);
     }
 
-    static sendEvent(name)
-    {
+    static sendEvent(name) {
+        if (Platform.OS === 'ios') return;
         return RNPushe.sendEvent(name);
     }
 
-    
+    // iOS API
+
+    static start(appId) {
+        if (!isInitilized()) return;
+
+        if (Platform.OS === 'ios') {
+            RNPushe.start(appId)
+        } else {
+            console.log("This function is not implemented in android");
+        }
+    }
+
+    static subscribe(topic) {
+        if (!isInitilized()) return;
+
+        if (Platform.OS === 'ios') {
+            RNPushe.subscribe(topic)
+        } else {
+            console.log("This function is not implemented in android");
+        }   
+    }
+
+    static unsubscribe(topic) {
+        if (!isInitilized()) return;
+
+        if (Platform.OS === 'ios') {
+            RNPushe.unsubscribe(topic)
+        } else {
+            console.log("This function is not implemented in android");
+        }   
+    }
 }
 
 export default Pushe;
