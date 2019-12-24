@@ -126,7 +126,7 @@ class Pushe {
      * 
      * @return {Promise<boolean>} Promise - if no parameter passed
      */
-    static isPusheisRegistered() {
+    static isPusheRegistered() {
         if (Platform.OS === 'ios') return;
         return RNPushe.isRegistered();
     }

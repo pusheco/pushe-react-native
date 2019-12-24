@@ -73,7 +73,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
 
     @Override
     public String getName() {
-        return "Pushe";
+        return "RNPushe";
     }
 
 
