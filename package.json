@@ -1,7 +1,7 @@
 {
-  "name": "pushe-plus-react-native",
-  "version": "0.1.0",
-  "pushe-bundled-version": "2.0.0",
+  "name": "pushe-react-native",
+  "version": "2.0.0",
+  "pushe-bundled-version": "2.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
