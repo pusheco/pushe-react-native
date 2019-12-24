@@ -1,4 +1,3 @@
-
 {
   "name": "pushe-plus-react-native",
   "version": "0.1.0",
@@ -14,10 +13,10 @@
     "pushe-plus",
     "notification"
   ],
-  "author": "Amir Aleahmad",
+  "author": "pushe.co",
   "license": "",
   "peerDependencies": {
-    "react-native": "^0.60.4",
+    "react-native": "^0.61.5",
     "react-native-windows": "0.59.0-rc.1",
     "invariant": "2.2.4"
   }
