@@ -97,16 +97,6 @@ class Pushe {
         });
     }
 
-      /**
-     * Initialize Pushe
-     * 
-     * @param {boolean} showGooglePlayDialog 
-     */
-    static initialize(showGooglePlayDialog = false) {
-        if (Platform.OS === 'ios') return;
-        RNPushe.initialize(showGooglePlayDialog);
-    }
-
     /**
      * Check if Pushe is initialized or not
      *
