@@ -4,96 +4,86 @@ import invariant from "invariant";
 
 const { RNPushe } = NativeModules;
 
-const PusheEventBroadcasts = [
-    "Pushe-NotificationReceived",
-    "Pushe-CustomContentReceived",
-    "Pushe-Clicked",
-    "Pushe-Dismissed",
-    "Pushe-ButtonClicked",
-];
+const pusheEventEmitter = new NativeEventEmitter();
 
-function isInitilized() {
-    return RNPushe !== null;
-}
+const EVENTS_TYPES = ["received", "clicked", "dismissed", "button_clicked", "custom_content_received"]
 
-let PusheEventEmitter;
-const _eventTypes = ["received", "custom_content_received", "clicked", "dismissed", "button_clicked"];
-const _notificationBaseType = new Map();
-const _handlerBaseType = new Map();
-const _listeners = {};
+// key = events that user can attach handlers on them
+// value = broadcast events that are emitted from the native 
+// and are corrospond to the ones in (co.ronash.pushe.utils)
+const _pusheEvents = new Map([
+    [EVENTS_TYPES[0], "Pushe-NotificationReceived"],
+    [EVENTS_TYPES[1], "Pushe-Clicked"],
+    [EVENTS_TYPES[2], "Pushe-Dismissed"],
+    [EVENTS_TYPES[3], "Pushe-ButtonClicked"],
+    [EVENTS_TYPES[4], "Pushe-CustomContentReceived"],
+]);
 
-function handleEventBroadcast(type, broadcast) {
-    return PusheEventEmitter.addListener(broadcast, (notification) => {
-        // If handler is set already call it with notification
-        // else cache notification until handler is being set
+// store all broadcastListeners (actually their returned subscriptions) and their handlers in this object
+const _broadcastListeners = {}; 
 
-        let handler = _handlerBaseType.get(type);
-        if (handler) {
-            handler(notification);
+const _cachedNotification = new Map();
+const _userEventHandlers = new Map();
+
+function _attachEventBroadcasts(event, nativeBroadcastEvent) {
+    return pusheEventEmitter.addListener(nativeBroadcastEvent, (notification) => {
+        let userEventHandler = _userEventHandlers.get(event);
+
+        // Check if user already set a handler 
+        // for this event type then call it 
+        // if not cache notification for later
+        if (userEventHandler) {
+            userEventHandler(notification);
         } else {
-            _notificationBaseType.set(type, notification);
+            _cachedNotification.set(event, notification);
         }
     });
 }
 
-if (isInitilized && Platform.OS === 'android') {
-    PusheEventEmitter = new NativeEventEmitter(RNPushe);
-
-    PusheEventBroadcasts.forEach((eventBroadcast, index) => {
-        const event = _eventTypes[index];
-        _listeners[event] = handleEventBroadcast(event, eventBroadcast);
+// Start point for attaching nativeBrodcast events
+if (RNPushe !== null) {
+    _pusheEvents.forEach(function(nativeBroadcastEvent, event) {
+        _broadcastListeners[event] = _attachEventBroadcasts(event, nativeBroadcastEvent);
     });
 }
+
 
 class Pushe {
 
-    static events = {
-        RECEIVED: _eventTypes[0],
-        CUSTOM_CONTENT_RECEIVED: _eventTypes[1],
-        CLICKED: _eventTypes[2],
-        DISMISSED: _eventTypes[3],
-        BUTTON_CLICKED: _eventTypes[4],
+     /**
+     * Available events type to add listener on them
+     */
+    static EVENTS = {
+        RECEIVED: EVENTS_TYPES[0],
+        CLICKED: EVENTS_TYPES[1],
+        DISMISSED: EVENTS_TYPES[2],
+        BUTTON_CLICKED: EVENTS_TYPES[3],
+        CUSTOM_CONTENT_RECEIVED: EVENTS_TYPES[4],
     }
 
-    static addEventListener(type, handler) {
-        if (!isInitilized) return;
-        if (Platform.OS === 'ios') return;
+    static addEventListener(eventType, eventHandler) {
+        if (!eventHandler) return;
 
-        invariant(
-            type !== Pushe.events.RECEIVED || type !== Pushe.events.CUSTOM_CONTENT_RECEIVED ||
-            type !== Pushe.events.CLICKED  || type !== Pushe.events.DISMISSED || type !== Pushe.events.BUTTON_CLICKED,
-            'Invalid event,only use one of `Pushe.events.RECEIVED`, `Pushe.events.CUSTOM_CONTENT_RECEIVED`, `Pushe.events.CLICKED`, `Pushe.events.DISMISSED`, `Pushe.events.BUTTON_CLICKED`',
-        );
+        // save user eventHandler 
+        _userEventHandlers.set(eventType, eventHandler);
 
-        _handlerBaseType.set(type, handler);
-
-        // Check if already cached a notification for this event type
-        const notificationCache = _notificationBaseType.get(type);
-        if (handler && notificationCache) {
-            handler(notificationCache);
-            _notificationBaseType.delete(type);
+        // If already we have a cached notification for this eventType
+        // call userEventHandler with this cached notification
+        const cachedNotification = _cachedNotification.get(eventType);
+        if (cachedNotification) {
+            eventHandler(cachedNotification);
+            _cachedNotification.delete(eventType);
         }
     }
 
-    static removeEventListener(type, handler) {
-        if (!isInitilized) return;
-        if (Platform.OS === 'ios') return;
-
-        invariant(
-            type !== Pushe.events.RECEIVED || type !== Pushe.events.CUSTOM_CONTENT_RECEIVED ||
-            type !== Pushe.events.CLICKED  || type !== Pushe.events.DISMISSED || type !== Pushe.events.BUTTON_CLICKED,
-            'Invalid event,only use one of `Pushe.events.RECEIVED`, `Pushe.events.CUSTOM_CONTENT_RECEIVED`, `Pushe.events.CLICKED`, `Pushe.events.DISMISSED`, `Pushe.events.BUTTON_CLICKED`',
-        );
-
-        _handlerBaseType.delete(type);
+    static removeEventListener(eventType) {
+        _userEventHandlers.delete(eventType);
     }
 
     static clearListeners() {
-        if (!isInitilized) return;
-        if (Platform.OS === 'ios') return;
-
-        _eventTypes.forEach((type) => {
-            _listeners[type].remove();
+        _pusheEvents.forEach((_value, key) => {
+            pusheEventEmitter.removeAllListeners(_broadcastListeners[key]);
+            _broadcastListeners.delete(key);
         });
     }
 

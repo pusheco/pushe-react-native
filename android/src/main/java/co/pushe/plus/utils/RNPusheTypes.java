@@ -6,6 +6,7 @@ public class RNPusheTypes {
      * These event types are equivalent to the types that are defined
      * in react native `index.js` file of pushe-plus-react-native
      */
+
     public enum EVENTS_TYPES {
         RECEIVED("Pushe-NotificationReceived", "received"),
         CUSTOM_CONTENT_RECEIVED("Pushe-CustomContentReceived", "custom_content_received"),
