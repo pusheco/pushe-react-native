@@ -144,12 +144,6 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
         });
     }
 
-    @Deprecated
-    @ReactMethod
-    public void subscribe(final String topic, final Promise promise) {
-        subscribeToTopic(topic, promise);
-    }
-
     @ReactMethod
     public void unsubscribeFromTopic(final String topic, final Promise promise) {
         Pushe.unsubscribeFromTopic(topic, new Pushe.Callback() {
@@ -197,12 +191,6 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
 
     @Deprecated
     @ReactMethod
-    public void unsubscribe(final String topic, final Promise promise) {
-        unsubscribeFromTopic(topic, promise);
-    }
-
-    @Deprecated
-    @ReactMethod
     public void getPusheId(final Promise promise)
     {
         String pusheId = Pushe.getPusheId();
@@ -212,13 +200,23 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
     @ReactMethod
     public void getGoogleAdvertisingId(final Promise promise) {
         String googleAdvertisingId = Pushe.getGoogleAdvertisingId();
-        promise.resolve(googleAdvertisingId);
+                
+        if (googleAdvertisingId == null) {
+            promise.reject(new Error("Could not get getGoogleAdvertisingId"));
+        } else {
+            promise.resolve(googleAdvertisingId);    
+        }
     }
 
     @ReactMethod
     public void getAndroidId(final Promise promise) {
         String androidId = Pushe.getAndroidId();
-        promise.resolve(androidId);
+
+        if (androidId == null) {
+            promise.reject(new Error("Could not get androidId"));
+        } else {
+            promise.resolve(androidId);
+        }
     }
 
     @ReactMethod
@@ -231,7 +229,12 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
     @ReactMethod
     public void getCustomId(final Promise promise) {
         String customId = Pushe.getCustomId();
-        promise.resolve(customId);
+        
+        if (customId == null) {
+            promise.reject(new Error("Getting Custom Id failed"));
+        } else {
+            promise.resolve(customId);    
+        }
     }
 
     @ReactMethod
@@ -243,7 +246,12 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
     @ReactMethod
     public void getUserEmail(final Promise promise) {
         String email = Pushe.getUserEmail();
-        promise.resolve(email);
+        
+        if (email == null) {
+            promise.reject(new Error("Getting user email failed"));
+        } else {
+            promise.resolve(email);
+        }
     }
 
     @ReactMethod
@@ -255,7 +263,12 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
     @ReactMethod
     public void getUserPhoneNumber(final Promise promise) {
         String phoneNumber = Pushe.getUserPhoneNumber();
-        promise.resolve(phoneNumber);
+
+        if (phoneNumber == null) {
+            promise.reject(new Error("Getting user phone number failed"));
+        } else {
+            promise.resolve(phoneNumber);
+        }
     }
 
 

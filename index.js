@@ -1,6 +1,5 @@
 
-import { NativeModules, NativeEventEmitter, Platform, AppRegistry } from 'react-native';
-import invariant from "invariant";
+import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
 
 const { RNPushe } = NativeModules;
 
@@ -94,7 +93,7 @@ class Pushe {
      * 
      * @return {Promise<boolean>} Promise - if no parameter passed
      */
-    static isPusheInitialized() {
+    static isInitialized() {
         if (Platform.OS === 'ios') return;
         return RNPushe.isInitialized();
     }
@@ -106,7 +105,7 @@ class Pushe {
      * 
      * @return {Promise<boolean>} Promise - if no parameter passed
      */
-    static isPusheRegistered() {
+    static isRegistered() {
         if (Platform.OS === 'ios') return;
         return RNPushe.isRegistered();
     }
@@ -208,7 +207,7 @@ class Pushe {
      * @param {string} topicName 
      * @return void
      */
-    static subscribeTopic(topicName) {
+    static subscribeToTopic(topicName) {
         if (Platform.OS === 'ios') return;
         return RNPushe.subscribeToTopic(topicName);
     }
@@ -219,9 +218,9 @@ class Pushe {
      * @param {string} topicName 
      * @return void
      */
-    static unsubscribeTopic(topicName) {
+    static unsubscribeFromTopic(topicName) {
         if (Platform.OS === 'ios') return;
-        return RNPushe.unsubscribe(topicName);
+        return RNPushe.unsubscribeFromTopic(topicName);
     }
 
     /**
