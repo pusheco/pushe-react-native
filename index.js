@@ -259,7 +259,7 @@ class Pushe {
      * Disable notification
      * 
      */
-    static setNotificationOff() {
+    static disableNotifications() {
         if (Platform.OS === 'ios') return;
         return RNPushe.disableNotifications();
     }
@@ -268,7 +268,7 @@ class Pushe {
      * Enable notification
      * 
      */
-    static setNotificationOn() {
+    static enableNotifications() {
         if (Platform.OS === 'ios') return;
         return RNPushe.enableNotifications();
     }
