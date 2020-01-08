@@ -60,6 +60,12 @@ class Pushe {
         CUSTOM_CONTENT_RECEIVED: EVENTS_TYPES[4],
     }
 
+    static ANDROID_ID_TYPES = {
+        CUSTOM_ID: 'CUSTOM_ID',
+        ANDROID_ID: 'ANDROID_ID',
+        ADVERTISEMENT_ID: 'ADVERTISEMENT_ID'
+    }
+
     static addEventListener(eventType, eventHandler) {
         if (!eventHandler) return;
 
@@ -305,44 +311,18 @@ class Pushe {
     }
 
     /**
-     * Send a simple notification with only title and content
-     * to another device with pusheId
-     * @param {string} type 
-     * @param {string} pusheId 
-     * @param {string} title 
-     * @param {string} content 
-     * @return void
+     * Send notification to another device
      */
-    static sendSimpleNotifToUser(type,pusheId, title, content) {
+    static sendNotificationToUser({type, userId, ...otherParams}) {
         if (Platform.OS === 'ios') return;
-        RNPushe.sendNotification(type,pusheId, title, content);
-    }
+        if (!type || !userId) {
+            return Promise.reject("Must specify `type` & `userId`");
+        }
+        if (!Pushe.ANDROID_ID_TYPES[type]) {
+            return Promise.reject("Provide valid type from `Pushe.ANDROID_ID_TYPES`");
+        }
 
-    /**
-     * Send an advanced notification with a json object
-     * to another device with pusheId
-     * 
-     * @param {string} type
-     * @param {string} pusheId 
-     * @param {string} notificationJson - A json object
-     * @return {Promise<boolean|Error>} Promise - A proimse that resolve to `true` or reject with `Exception`
-     */
-    static sendAdvancedNotifToUser(type,pusheId, notificationJson) {
-        if (Platform.OS === 'ios') return;
-        return RNPushe.sendAdvancedNotifToUser(type,pusheId, notificationJson);
-    }
-
-    /**
-     * Send an custom notification with a json object
-     * to another device with pusheId
-     * 
-     * @param {string} pusheId 
-     * @param {string} notificationJson - A json object
-     * @return {Promise<boolean|Error>} Promise - A proimse that resolve to `true` or reject with `Exception`
-     */
-    static sendCustomJsonToUser(pusheId, notificationJson) {
-        if (Platform.OS === 'ios') return;
-        return RNPushe.sendCustomJsonToUser(pusheId, notificationJson);
+        return RNPushe.sendNotificationToUser(type, userId, JSON.stringify(otherParams));
     }
 
     /**

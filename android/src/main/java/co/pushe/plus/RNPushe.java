@@ -310,46 +310,27 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
 
 
     @ReactMethod
-    public void sendNotification(String type, String id, String title, String content, final Promise promise) {
+    public void sendNotificationToUser(String type, String id, String params, final Promise promise) {
         UserNotification userNotification;
+
         try {
             if (SEND_NOTIFICATION_TYPE.CUSTOM_ID.is(type)) {
-                userNotification = UserNotification.withCustomId(id).setTitle(title).setContent(content);
+                userNotification = UserNotification.withCustomId(id);
             } else if (SEND_NOTIFICATION_TYPE.ANDROID_ID.is(type)) {
-                userNotification = UserNotification.withAndroidId(id).setTitle(title).setContent(content);
+                userNotification = UserNotification.withAndroidId(id);
             } else if (SEND_NOTIFICATION_TYPE.ADVERTISEMENT_ID.is(type)) {
-                userNotification = UserNotification.withAdvertisementId(id).setTitle(title).setContent(content);
+                userNotification = UserNotification.withAdvertisementId(id);
             } else {
                 promise.reject(new Exception("Send notification type is not valid"));
                 return;
             }
+
+            userNotification.setAdvancedNotification(params);
             pusheNotification.sendNotificationToUser(userNotification);
-            promise.resolve(true);
+            Promise.resolve(true);
         } catch (Exception e) {
             promise.reject(e);
         }
-    }
-
-    @ReactMethod
-    public void sendNotification(String type, String id, String advancedNotification, final Promise promise) {
-        UserNotification userNotification;
-        try {
-            if (SEND_NOTIFICATION_TYPE.CUSTOM_ID.is(type)) {
-                userNotification = UserNotification.withCustomId(id).setAdvancedNotification(advancedNotification);
-            } else if (SEND_NOTIFICATION_TYPE.ANDROID_ID.is(type)) {
-                userNotification = UserNotification.withAndroidId(id).setAdvancedNotification(advancedNotification);
-            } else if (SEND_NOTIFICATION_TYPE.ADVERTISEMENT_ID.is(type)) {
-                userNotification = UserNotification.withAdvertisementId(id).setAdvancedNotification(advancedNotification);
-            } else {
-                promise.reject(new Exception("Send notification type is not valid"));
-                return;
-            }
-            pusheNotification.sendNotificationToUser(userNotification);
-            promise.resolve(true);
-        } catch (Exception e) {
-            promise.reject(e);
-        }
-
     }
 
     @ReactMethod
