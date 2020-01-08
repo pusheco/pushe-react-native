@@ -1,2 +1,5 @@
-PusheDemo
-PusheDemo/
+
+PusheReactNativeDemoApp
+PusheReactNativeDemoApp/
+node_modules
+.idea

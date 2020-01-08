@@ -2,7 +2,7 @@
   "name": "pushe-react-native",
   "version": "2.0.0",
   "pushe-bundled-version": "2.0.2",
-  "description": "",
+  "description": "pushe.co plugin for react native iOS and Android platforms",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,7 +10,6 @@
   "keywords": [
     "react-native",
     "pushe.co",
-    "pushe-plus",
     "notification"
   ],
   "author": "pushe.co",
