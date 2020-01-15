@@ -92,6 +92,13 @@ class Pushe {
         });
     }
 
+    static start(appId) {
+        if (!isInitilized()) return;
+        if (Platform.OS === 'android') return;
+
+        RNPushe.start(appId)
+    }
+
     /**
      * Check if Pushe is initialized or not
      *
@@ -214,8 +221,11 @@ class Pushe {
      * @return void
      */
     static subscribeToTopic(topicName) {
-        if (Platform.OS === 'ios') return;
-        return RNPushe.subscribeToTopic(topicName);
+        if (Platform.OS === 'ios') {
+            return RNPushe.subscribe(topicName);
+        } else {
+            return RNPushe.subscribeToTopic(topicName);
+        }
     }
 
     /**
@@ -225,8 +235,11 @@ class Pushe {
      * @return void
      */
     static unsubscribeFromTopic(topicName) {
-        if (Platform.OS === 'ios') return;
-        return RNPushe.unsubscribeFromTopic(topicName);
+        if (Platform.OS === 'ios') {
+            RNPushe.unsubscribe(topic)
+        } else {
+            return RNPushe.unsubscribeFromTopic(topicName);
+        }
     }
 
     /**
@@ -364,37 +377,6 @@ class Pushe {
         return RNPushe.sendEvent(name);
     }
 
-    // iOS API
-
-    static start(appId) {
-        if (!isInitilized()) return;
-
-        if (Platform.OS === 'ios') {
-            RNPushe.start(appId)
-        } else {
-            console.log("This function is not implemented in android");
-        }
-    }
-
-    static subscribe(topic) {
-        if (!isInitilized()) return;
-
-        if (Platform.OS === 'ios') {
-            RNPushe.subscribe(topic)
-        } else {
-            console.log("This function is not implemented in android");
-        }   
-    }
-
-    static unsubscribe(topic) {
-        if (!isInitilized()) return;
-
-        if (Platform.OS === 'ios') {
-            RNPushe.unsubscribe(topic)
-        } else {
-            console.log("This function is not implemented in android");
-        }   
-    }
 }
 
 export default Pushe;
