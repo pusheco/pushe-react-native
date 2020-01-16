@@ -41,9 +41,11 @@ public class MainApplication extends Application implements ReactApplication {
 
   @Override
   public void onCreate() {
+    System.out.println("This is another one... wait");
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this); // Remove this line if you don't want Flipper enabled
+    co.pushe.plus.RNPushe.initializeEventListeners(this);
   }
 
   /**

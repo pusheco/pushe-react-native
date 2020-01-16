@@ -6,14 +6,19 @@
  * @flow
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, View, Button} from 'react-native';
 
 import ScreenContainer from './ScreenContainer';
+import Pushe from "pushe-react-native";
 
 export default ({navigation}) => {
     const {navigate} = navigation;
     
+    useEffect(() => {
+        // 
+    }, []); 
+
   return (
     <>
       <ScreenContainer>

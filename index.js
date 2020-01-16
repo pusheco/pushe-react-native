@@ -271,7 +271,7 @@ class Pushe {
 
     static getSubscribedTags() {
         if (Platform.OS === 'ios') return;
-        return RNPushe.getSubscribedTopics();
+        return RNPushe.getSubscribedTags();
     }
 
     /**

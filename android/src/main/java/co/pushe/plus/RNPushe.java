@@ -180,13 +180,18 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
 
     @ReactMethod
     public void getSubscribedTags(final Promise promise) {
-        WritableMap writableMap = new WritableNativeMap();
-        Map<String, String> map = Pushe.getSubscribedTags();
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            writableMap.putString(entry.getKey(), entry.getValue());
-        }
+        try {
+            WritableMap writableMap = new WritableNativeMap();
+            Map<String, String> map = Pushe.getSubscribedTags();
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                writableMap.putString(entry.getKey(), entry.getValue());
+            }
 
-        promise.resolve(writableMap);
+            promise.resolve(writableMap);
+        } catch (Exception e) {
+            promise.reject(e);
+        }
+        
     }
 
     @Deprecated
@@ -327,7 +332,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
 
             userNotification.setAdvancedNotification(params);
             pusheNotification.sendNotificationToUser(userNotification);
-            Promise.resolve(true);
+            promise.resolve(true);
         } catch (Exception e) {
             promise.reject(e);
         }
@@ -382,7 +387,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
     }
 
     private void startHeadlessJsTask(Intent intent, String eventType) {
-        intent.putExtra("event", eventType);
+        intent.putExtra("EVENT_TYPE", eventType);
 
         reactContext.startService(intent);
         HeadlessJsTaskService.acquireWakeLockNow(reactContext);
