@@ -28,7 +28,7 @@ export default () => {
                                 ...init,
                                 initialized: true
                             });
-                            Pushe.isPusheInitialized().then((isInit) => {
+                            Pushe.isInitialized().then((isInit) => {
                                 updateState({
                                     ...state,
                                     initialized: isInit
@@ -59,7 +59,7 @@ export default () => {
                                 ...init,
                                 registered: true,
                             });
-                            Pushe.isPusheRegistered().then((isReg) => {
+                            Pushe.isRegistered().then((isReg) => {
                                 updateState({
                                     ...state, 
                                     registered: isReg,
