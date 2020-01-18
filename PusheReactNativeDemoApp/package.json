@@ -1,5 +1,5 @@
 {
-  "name": "PusheReactNativeDemoApp",
+  "name": "pushe-react-native-demo-app",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "pushe-react-native": "file:../pushe-react-native-2.0.0.tgz",
+    "pushe-react-native": "^2.0.0",
     "react": "16.9.0",
     "react-native": "0.61.5",
     "react-native-gesture-handler": "^1.5.3",

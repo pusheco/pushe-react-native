@@ -92,7 +92,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
         new RNPushe(new ReactApplicationContext(context)).initializeNotificationCallbacks();
     }
 
-    private void sendEvent(String eventName, Object params) {
+    private void sendCallbackEvent(String eventName, Object params) {
         reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, params);
     }
 
@@ -403,7 +403,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
             public void onNotification(@NonNull NotificationData notificationData) {
 
                 if (isAppOnForeground) {
-                    sendEvent(EVENTS_TYPES.RECEIVED.getBroadcast(), notificationDataToWritableMap(notificationData));
+                    sendCallbackEvent(EVENTS_TYPES.RECEIVED.getBroadcast(), notificationDataToWritableMap(notificationData));
 
                 } else {
                     Intent intent = getNotificationIntent(reactContext, notificationData);
@@ -414,7 +414,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
             @Override
             public void onCustomContentNotification(@NonNull Map<String, Object> map) {
                 if (isAppOnForeground) {
-                    sendEvent(EVENTS_TYPES.CUSTOM_CONTENT_RECEIVED.getBroadcast(), mapToWritableMap(map));
+                    sendCallbackEvent(EVENTS_TYPES.CUSTOM_CONTENT_RECEIVED.getBroadcast(), mapToWritableMap(map));
                 } else {
                     Intent intent = new Intent(reactContext, RNPusheNotificationService.class);
                     intent.putExtra("customContent", mapToBundle(map));
@@ -425,7 +425,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
             @Override
             public void onNotificationClick(@NonNull NotificationData notificationData) {
                 if (isAppOnForeground) {
-                    sendEvent(EVENTS_TYPES.CLICKED.getBroadcast(), notificationDataToWritableMap(notificationData));
+                    sendCallbackEvent(EVENTS_TYPES.CLICKED.getBroadcast(), notificationDataToWritableMap(notificationData));
                 } else {
                     Intent intent = getNotificationIntent(reactContext, notificationData);
                     startHeadlessJsTask(intent, EVENTS_TYPES.CLICKED.getEvent());
@@ -435,7 +435,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
             @Override
             public void onNotificationDismiss(@NonNull NotificationData notificationData) {
                 if (isAppOnForeground) {
-                    sendEvent(EVENTS_TYPES.DISMISSED.getBroadcast(), notificationDataToWritableMap(notificationData));
+                    sendCallbackEvent(EVENTS_TYPES.DISMISSED.getBroadcast(), notificationDataToWritableMap(notificationData));
                 } else {
                     Intent intent = getNotificationIntent(reactContext, notificationData);
                     startHeadlessJsTask(intent, EVENTS_TYPES.DISMISSED.getEvent());
@@ -445,7 +445,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
             @Override
             public void onNotificationButtonClick(@NonNull NotificationButtonData notificationButtonData, @NonNull NotificationData notificationData) {
                 if (isAppOnForeground) {
-                    sendEvent(EVENTS_TYPES.BUTTON_CLICKED.getBroadcast(), notificationDataToWritableMap(notificationData));
+                    sendCallbackEvent(EVENTS_TYPES.BUTTON_CLICKED.getBroadcast(), notificationDataToWritableMap(notificationData));
                 } else {
                     Intent intent = getNotificationIntent(reactContext, notificationData);
 

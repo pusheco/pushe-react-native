@@ -16,7 +16,7 @@ export default ({navigation}) => {
     const {navigate} = navigation;
     
     useEffect(() => {
-        // 
+      //
     }, []); 
 
   return (
