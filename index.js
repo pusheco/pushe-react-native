@@ -112,7 +112,7 @@ class Pushe {
      * @return {Promise<boolean>} Promise - if no parameter passed
      */
     static isRegistered() {
-        if (Platform.OS === 'ios') return;
+        // if (Platform.OS === 'ios') return;
         return RNPushe.isRegistered();
     }
     /**
@@ -368,6 +368,13 @@ class Pushe {
     static sendEvent(name) {
         if (Platform.OS === 'ios') return;
         return RNPushe.sendEvent(name);
+    }
+
+    // iOS specific methods
+
+    static getAPNsTokenAsString() {
+        if (Platform.OS == 'android') return;
+        return RNPushe.getAPNsTokenAsString()
     }
 
 }
