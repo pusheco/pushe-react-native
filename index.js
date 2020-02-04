@@ -374,9 +374,18 @@ class Pushe {
 
     static getAPNsTokenAsString() {
         if (Platform.OS == 'android') return;
-        return RNPushe.getAPNsTokenAsString()
+        return RNPushe.getAPNsTokenAsString();
     }
 
+    static getDeviceId() {
+        if (Platform.OS == 'android') return;
+        return RNPushe.getDeviceId();
+    }
+
+    static getAdvertisingId() {
+        if (Platform.OS == 'android') return;
+        return RNPushe.getAdvertisingId();
+    }
 }
 
 export default Pushe;
