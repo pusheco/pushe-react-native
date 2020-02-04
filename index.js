@@ -3,7 +3,7 @@ import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
 
 const { RNPushe } = NativeModules;
 
-const pusheEventEmitter = new NativeEventEmitter();
+let pusheEventEmitter = new NativeEventEmitter(RNPushe);
 
 const EVENTS_TYPES = ["received", "clicked", "dismissed", "button_clicked", "custom_content_received"]
 
@@ -40,7 +40,7 @@ function _attachEventBroadcasts(event, nativeBroadcastEvent) {
 }
 
 // Start point for attaching nativeBrodcast events
-if (RNPushe !== null) {
+if (RNPushe !== null && Platform.OS === 'android') {
     _pusheEvents.forEach(function(nativeBroadcastEvent, event) {
         _broadcastListeners[event] = _attachEventBroadcasts(event, nativeBroadcastEvent);
     });
