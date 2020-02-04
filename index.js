@@ -92,13 +92,6 @@ class Pushe {
         });
     }
 
-    static start(appId) {
-        if (!isInitilized()) return;
-        if (Platform.OS === 'android') return;
-
-        RNPushe.start(appId)
-    }
-
     /**
      * Check if Pushe is initialized or not
      *
