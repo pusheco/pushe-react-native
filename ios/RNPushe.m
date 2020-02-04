@@ -5,12 +5,6 @@
 
 RCT_EXPORT_MODULE();
 
-RCT_EXPORT_METHOD(start:(NSString *)appId) {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [PusheClient.shared start:appId];
-    });
-}
-
 RCT_EXPORT_METHOD(subscribe:(NSString *)topic) {
     [PusheClient.shared subscribe:topic];
 }
