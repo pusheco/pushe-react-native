@@ -1,5 +1,4 @@
 #import "RNPushe.h"
-@import Pushe;
 
 @implementation RNPushe
 
