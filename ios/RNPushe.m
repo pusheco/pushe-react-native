@@ -50,7 +50,8 @@ RCT_EXPORT_METHOD(subscribe:(NSString *)topic
 {
     [PusheClient.shared subscribe:topic :^(NSError * error) {
         if (error == nil) {
-            resolve(nil);
+            NSString *result = @"success";
+            resolve(result);
         } else {
             reject(nil, nil, error);
         }
@@ -67,7 +68,8 @@ RCT_EXPORT_METHOD(unsubscribe:(NSString *)topic
 {
     [PusheClient.shared unsubscribe:topic :^(NSError * error) {
         if (error == nil) {
-            resolve(nil);
+            NSString *result = @"success";
+            resolve(result);
         } else {
             reject(nil, nil, error);
         }

@@ -228,7 +228,7 @@ class Pushe {
      */
     static unsubscribeFromTopic(topicName) {
         if (Platform.OS === 'ios') {
-            return RNPushe.unsubscribe(topic)
+            return RNPushe.unsubscribe(topicName);
         } else {
             return RNPushe.unsubscribeFromTopic(topicName);
         }
@@ -238,7 +238,7 @@ class Pushe {
      * get subscribed topics
      */
     static getSubscribedTopics() {
-        if (Platform.OS === 'ios') return;
+        // if (Platform.OS === 'ios') return;
         return RNPushe.getSubscribedTopics();
     }
 
