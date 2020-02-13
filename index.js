@@ -112,7 +112,6 @@ class Pushe {
      * @return {Promise<boolean>} Promise - if no parameter passed
      */
     static isRegistered() {
-        // if (Platform.OS === 'ios') return;
         return RNPushe.isRegistered();
     }
     /**
@@ -229,7 +228,7 @@ class Pushe {
      */
     static unsubscribeFromTopic(topicName) {
         if (Platform.OS === 'ios') {
-            RNPushe.unsubscribe(topic)
+            return RNPushe.unsubscribe(topic)
         } else {
             return RNPushe.unsubscribeFromTopic(topicName);
         }
@@ -248,7 +247,6 @@ class Pushe {
      * @param {object} tags - Object of key: string, value: string
      */
     static addTags(tags) {
-        if (Platform.OS === 'ios') return;
         return RNPushe.addTags(tags);
     }
 
@@ -257,7 +255,6 @@ class Pushe {
      * @param {list} list - a list of strings
      */
     static removeTags(list) {
-        if (Platform.OS === 'ios') return;
         return RNPushe.removeTags(list);
     }
 
@@ -365,14 +362,22 @@ class Pushe {
         return RNPushe.sendEcommerceData(name,price);
     }
 
-    static sendEvent(name) {
-        if (Platform.OS === 'ios') return;
-        return RNPushe.sendEvent(name);
+    static EventAction = {
+        CUSTOM : 'custom',
+        SIGNUP : 'sign_up',
+        LOGIN : 'login',
+        PURCHASE : 'purchase',
+        ACHIEVEMENT : 'achievement',
+        LEVEL : 'level'
+    }
+
+    static sendEvent(name, action=Pushe.EventAction.CUSTOM, data={}) {
+        return RNPushe.sendEvent(name, action, data);
     }
 
     // iOS specific methods
 
-    static getAPNsTokenAsString() {
+    static getAPNsToken() {
         if (Platform.OS == 'android') return;
         return RNPushe.getAPNsTokenAsString();
     }
