@@ -83,12 +83,21 @@ RCT_REMAP_METHOD(getSubscribedTopics,
     resolve(result);
 }
 
-RCT_EXPORT_METHOD(addTags:(NSDictionary<NSString *, NSString *> * _Nonnull)dictionary) {
-    [PusheClient.shared addTags:dictionary];
+RCT_EXPORT_METHOD(addTags:(NSDictionary * _Nonnull)dictionary) {
+    NSArray *keys = [RCTConvert NSStringArray:dictionary.allKeys];
+    NSArray *values = [RCTConvert NSStringArray:dictionary.allValues];
+    if (keys != NULL && keys.count > 0 && values != NULL && values.count > 0) {
+        [PusheClient.shared addTags:dictionary];
+    } else {
+        NSLog(@"malforemed data for addTags");
+    }
 }
 
 RCT_EXPORT_METHOD(removeTags:(NSArray<NSString *> * _Nonnull)keys) {
-    [PusheClient.shared removeTags:keys];
+    NSArray *stringKeys = [RCTConvert NSStringArray:keys];
+    if (stringKeys != NULL && stringKeys.count > 0) {
+        [PusheClient.shared removeTags:stringKeys];
+    }
 }
 
 RCT_REMAP_METHOD(getSubscribedTags,

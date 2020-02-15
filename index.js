@@ -238,7 +238,6 @@ class Pushe {
      * get subscribed topics
      */
     static getSubscribedTopics() {
-        // if (Platform.OS === 'ios') return;
         return RNPushe.getSubscribedTopics();
     }
 
@@ -260,7 +259,6 @@ class Pushe {
 
 
     static getSubscribedTags() {
-        if (Platform.OS === 'ios') return;
         return RNPushe.getSubscribedTags();
     }
 
@@ -371,22 +369,38 @@ class Pushe {
         LEVEL : 'level'
     }
 
+    /**
+    * sends event to server
+    *
+    * @param {string} name
+    * @param {EventAction} action
+    * @param {object} data - Object of key: string, value: objc
+    */
     static sendEvent(name, action=Pushe.EventAction.CUSTOM, data={}) {
         return RNPushe.sendEvent(name, action, data);
     }
 
     // iOS specific methods
 
+    /**
+    * Returns APNs-token for iOS
+    */
     static getAPNsToken() {
         if (Platform.OS == 'android') return;
         return RNPushe.getAPNsTokenAsString();
     }
 
+    /**
+    * Returns DeviceId for iOS
+    */
     static getDeviceId() {
         if (Platform.OS == 'android') return;
         return RNPushe.getDeviceId();
     }
-
+    
+    /**
+    * Returns AdvertisingId for iOS
+    */
     static getAdvertisingId() {
         if (Platform.OS == 'android') return;
         return RNPushe.getAdvertisingId();
