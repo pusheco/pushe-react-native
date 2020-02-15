@@ -213,11 +213,7 @@ class Pushe {
      * @return void
      */
     static subscribeToTopic(topicName) {
-        if (Platform.OS === 'ios') {
-            return RNPushe.subscribe(topicName);
-        } else {
-            return RNPushe.subscribeToTopic(topicName);
-        }
+        return RNPushe.subscribeToTopic(topicName);
     }
 
     /**
@@ -227,11 +223,7 @@ class Pushe {
      * @return void
      */
     static unsubscribeFromTopic(topicName) {
-        if (Platform.OS === 'ios') {
-            return RNPushe.unsubscribe(topicName);
-        } else {
-            return RNPushe.unsubscribeFromTopic(topicName);
-        }
+        return RNPushe.unsubscribeFromTopic(topicName);
     }
 
     /**

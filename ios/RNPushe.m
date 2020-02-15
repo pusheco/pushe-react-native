@@ -15,22 +15,14 @@ RCT_REMAP_METHOD(getAPNsTokenAsString,
                  getAPNsTokenAsString_resolver:(RCTPromiseResolveBlock)resolve
                  getAPNsTokenAsString_rejecter:(RCTPromiseRejectBlock)reject) {
     NSString *apnsToken = [PusheClient.shared getAPNsTokenAsString];
-    if (apnsToken != nil) {
-        resolve(apnsToken);
-    } else {
-        reject(nil, nil, nil);
-    }
+    resolve(apnsToken);
 }
 
 RCT_REMAP_METHOD(getDeviceId,
                  getDeviceId_resolver:(RCTPromiseResolveBlock)resolve
                  getDeviceId_rejecter:(RCTPromiseRejectBlock)reject) {
     NSString *deviceId = [PusheClient.shared getDeviceId];
-    if (deviceId != nil) {
-        resolve(deviceId);
-    } else {
-        reject(nil, nil, nil);
-    }
+    resolve(deviceId);
 }
 
 RCT_REMAP_METHOD(getAdvertisingId,
@@ -40,7 +32,7 @@ RCT_REMAP_METHOD(getAdvertisingId,
     resolve(advertisingId);
 }
 
-RCT_EXPORT_METHOD(subscribe:(NSString *)topic) {
+RCT_EXPORT_METHOD(subscribeToTopic:(NSString *)topic) {
     [PusheClient.shared subscribe:topic];
 }
 
@@ -53,12 +45,12 @@ RCT_EXPORT_METHOD(subscribe:(NSString *)topic
             NSString *result = @"success";
             resolve(result);
         } else {
-            reject(nil, nil, error);
+            reject(error.localizedDescription, error.localizedFailureReason, error);
         }
     }];
 }
 
-RCT_EXPORT_METHOD(unsubscribe:(NSString *)topic) {
+RCT_EXPORT_METHOD(unsubscribeFromTopic:(NSString *)topic) {
     [PusheClient.shared unsubscribe:topic];
 }
 
@@ -71,7 +63,7 @@ RCT_EXPORT_METHOD(unsubscribe:(NSString *)topic
             NSString *result = @"success";
             resolve(result);
         } else {
-            reject(nil, nil, error);
+            reject(error.localizedDescription, error.localizedFailureReason, error);
         }
     }];
 }
@@ -89,7 +81,7 @@ RCT_EXPORT_METHOD(addTags:(NSDictionary * _Nonnull)dictionary) {
     if (keys != NULL && keys.count > 0 && values != NULL && values.count > 0) {
         [PusheClient.shared addTags:dictionary];
     } else {
-        NSLog(@"malforemed data for addTags");
+        NSLog(@"malforemed data for addTags: Dictionary of strings to strings expected");
     }
 }
 
@@ -97,6 +89,8 @@ RCT_EXPORT_METHOD(removeTags:(NSArray<NSString *> * _Nonnull)keys) {
     NSArray *stringKeys = [RCTConvert NSStringArray:keys];
     if (stringKeys != NULL && stringKeys.count > 0) {
         [PusheClient.shared removeTags:stringKeys];
+    } else {
+        NSLog(@"malfored data for removeTags: Array of strings expected");
     }
 }
 
