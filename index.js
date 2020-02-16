@@ -378,7 +378,7 @@ class Pushe {
     * Returns APNs-token for iOS
     */
     static getAPNsToken() {
-        if (Platform.OS == 'android') return;
+        if (Platform.OS === 'android') return;
         return RNPushe.getAPNsTokenAsString();
     }
 
@@ -386,7 +386,7 @@ class Pushe {
     * Returns DeviceId for iOS
     */
     static getDeviceId() {
-        if (Platform.OS == 'android') return;
+        if (Platform.OS === 'android') return;
         return RNPushe.getDeviceId();
     }
     
@@ -394,7 +394,7 @@ class Pushe {
     * Returns AdvertisingId for iOS
     */
     static getAdvertisingId() {
-        if (Platform.OS == 'android') return;
+        if (Platform.OS === 'android') return;
         return RNPushe.getAdvertisingId();
     }
 }
