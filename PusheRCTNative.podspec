@@ -3,7 +3,7 @@ require "json"
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
 Pod::Spec.new do |s|
-  s.name         = "pushe-plus-react-native"
+  s.name         = "PusheRCTNative"
   s.version      = package["version"]
   s.summary      = "Pushe push-notification framework for react-native in iOS" # package["description"]
   s.description  = <<-DESC
@@ -20,6 +20,6 @@ Pod::Spec.new do |s|
   s.static_framework = true
 
   s.dependency "React"
-  s.dependency "Pushe"
+  s.dependency "Pushe", "1.0.5"
 end
 

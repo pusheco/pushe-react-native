@@ -1,5 +1,8 @@
 #import <Foundation/Foundation.h>
 #import <React/RCTBridge.h>
+#import <React/RCTConvert.h>
+
+@import Pushe;
 
 NS_ASSUME_NONNULL_BEGIN
 

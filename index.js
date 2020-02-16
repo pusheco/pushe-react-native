@@ -3,7 +3,7 @@ import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
 
 const { RNPushe } = NativeModules;
 
-const pusheEventEmitter = new NativeEventEmitter();
+let pusheEventEmitter = new NativeEventEmitter(RNPushe);
 
 const EVENTS_TYPES = ["received", "clicked", "dismissed", "button_clicked", "custom_content_received"]
 
@@ -40,7 +40,7 @@ function _attachEventBroadcasts(event, nativeBroadcastEvent) {
 }
 
 // Start point for attaching nativeBrodcast events
-if (RNPushe !== null) {
+if (RNPushe !== null && Platform.OS === 'android') {
     _pusheEvents.forEach(function(nativeBroadcastEvent, event) {
         _broadcastListeners[event] = _attachEventBroadcasts(event, nativeBroadcastEvent);
     });
@@ -92,13 +92,6 @@ class Pushe {
         });
     }
 
-    static start(appId) {
-        if (!isInitilized()) return;
-        if (Platform.OS === 'android') return;
-
-        RNPushe.start(appId)
-    }
-
     /**
      * Check if Pushe is initialized or not
      *
@@ -119,7 +112,6 @@ class Pushe {
      * @return {Promise<boolean>} Promise - if no parameter passed
      */
     static isRegistered() {
-        if (Platform.OS === 'ios') return;
         return RNPushe.isRegistered();
     }
     /**
@@ -221,11 +213,7 @@ class Pushe {
      * @return void
      */
     static subscribeToTopic(topicName) {
-        if (Platform.OS === 'ios') {
-            return RNPushe.subscribe(topicName);
-        } else {
-            return RNPushe.subscribeToTopic(topicName);
-        }
+        return RNPushe.subscribeToTopic(topicName);
     }
 
     /**
@@ -235,18 +223,13 @@ class Pushe {
      * @return void
      */
     static unsubscribeFromTopic(topicName) {
-        if (Platform.OS === 'ios') {
-            RNPushe.unsubscribe(topic)
-        } else {
-            return RNPushe.unsubscribeFromTopic(topicName);
-        }
+        return RNPushe.unsubscribeFromTopic(topicName);
     }
 
     /**
      * get subscribed topics
      */
     static getSubscribedTopics() {
-        if (Platform.OS === 'ios') return;
         return RNPushe.getSubscribedTopics();
     }
 
@@ -255,7 +238,6 @@ class Pushe {
      * @param {object} tags - Object of key: string, value: string
      */
     static addTags(tags) {
-        if (Platform.OS === 'ios') return;
         return RNPushe.addTags(tags);
     }
 
@@ -264,13 +246,11 @@ class Pushe {
      * @param {list} list - a list of strings
      */
     static removeTags(list) {
-        if (Platform.OS === 'ios') return;
         return RNPushe.removeTags(list);
     }
 
 
     static getSubscribedTags() {
-        if (Platform.OS === 'ios') return;
         return RNPushe.getSubscribedTags();
     }
 
@@ -372,11 +352,51 @@ class Pushe {
         return RNPushe.sendEcommerceData(name,price);
     }
 
-    static sendEvent(name) {
-        if (Platform.OS === 'ios') return;
-        return RNPushe.sendEvent(name);
+    static EventAction = {
+        CUSTOM : 'custom',
+        SIGNUP : 'sign_up',
+        LOGIN : 'login',
+        PURCHASE : 'purchase',
+        ACHIEVEMENT : 'achievement',
+        LEVEL : 'level'
     }
 
+    /**
+    * sends event to server
+    *
+    * @param {string} name
+    * @param {EventAction} action
+    * @param {object} data - Object of key: string, value: objc
+    */
+    static sendEvent(name, action=Pushe.EventAction.CUSTOM, data={}) {
+        return RNPushe.sendEvent(name, action, data);
+    }
+
+    // iOS specific methods
+
+    /**
+    * Returns APNs-token for iOS
+    */
+    static getAPNsToken() {
+        if (Platform.OS === 'android') return;
+        return RNPushe.getAPNsTokenAsString();
+    }
+
+    /**
+    * Returns DeviceId for iOS
+    */
+    static getDeviceId() {
+        if (Platform.OS === 'android') return;
+        return RNPushe.getDeviceId();
+    }
+    
+    /**
+    * Returns AdvertisingId for iOS
+    */
+    static getAdvertisingId() {
+        if (Platform.OS === 'android') return;
+        return RNPushe.getAdvertisingId();
+    }
 }
 
 export default Pushe;
