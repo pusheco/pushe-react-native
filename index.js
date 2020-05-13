@@ -93,6 +93,18 @@ class Pushe {
     }
 
     /**
+     * Only for apps that activate GDPR feature.
+     * Calling this means user gave consent due to GDPR rule and Pushe is allowed to work.
+     * (Calling this only once, is enough)
+     * 
+     * <b>By default this code is not needed to ba called</b>
+     */
+    static initialize() {
+        if (Platform.OS == 'ios') return;
+        return RNPushe.initialize();
+    }
+
+    /**
      * Check if Pushe is initialized or not
      *
      * it will return promise of type boolean

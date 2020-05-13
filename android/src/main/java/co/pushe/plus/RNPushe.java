@@ -96,10 +96,16 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
         reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, params);
     }
 
-    @Deprecated
     @ReactMethod
-    public void initialize() {
-        // Does not do anything
+    public void initialize(final Promise promise) {
+        Pushe.initialize();
+        promise.resolve(true);
+    }
+
+    @ReactMethod
+    public void setUserConsentGiven(final Promise promise) {
+        Pushe.setUserConsentGiven();
+        promise.resolve(true);
     }
 
     @ReactMethod
