@@ -150,8 +150,8 @@ class Pushe {
         return RNPushe.getGoogleAdvertisingId();
     }
     /**
-     * get androidId
-     * it will return a promise
+     * Returns androidId of device (No function in iOS)
+     * @deprecated since 2.1.1. In order to get android id, use <code>getDeviceId()</code>
      */
     static getAndroidId() {
         if (Platform.OS === 'ios') return;
@@ -383,10 +383,9 @@ class Pushe {
     }
 
     /**
-    * Returns DeviceId for iOS
+    * Returns DeviceId for iOS and Android
     */
     static getDeviceId() {
-        if (Platform.OS === 'android') return;
         return RNPushe.getDeviceId();
     }
     
