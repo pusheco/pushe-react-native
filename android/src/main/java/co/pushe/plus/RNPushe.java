@@ -194,14 +194,6 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
         
     }
 
-    @Deprecated
-    @ReactMethod
-    public void getPusheId(final Promise promise)
-    {
-        String pusheId = Pushe.getPusheId();
-        promise.resolve(pusheId);
-    }
-
     @ReactMethod
     public void getGoogleAdvertisingId(final Promise promise) {
         String googleAdvertisingId = Pushe.getGoogleAdvertisingId();
