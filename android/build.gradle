@@ -29,12 +29,15 @@ android {
 
 repositories {
     maven {
-        url "https://dl.bintray.com/pushe/plus"
+        url "https://dl.bintray.com/pushe/preview"
     }
 }
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    implementation 'co.pushe.plus:base:2.0.4'
+    implementation("co.pushe.plus:base:2.1.1-beta10") {
+        exclude(group:'co.pushe.plus', module:'rxjava')
+    }
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.9'
 }
   
