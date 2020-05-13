@@ -117,6 +117,14 @@ class Pushe {
     }
 
     /**
+     * Set special permission.
+     */
+    static setUserConsentGiven() {
+        if (Platform.OS == 'ios') return;
+        return RNPushe.setUserConsentGiven();
+    }
+
+    /**
      * Check if Pushe is registered or not
      * 
      * it will return promise of type boolean
