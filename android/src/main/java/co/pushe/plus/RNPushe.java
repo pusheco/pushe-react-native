@@ -211,6 +211,7 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
         }
     }
 
+    @Deprecated
     @ReactMethod
     public void getAndroidId(final Promise promise) {
         String androidId = Pushe.getAndroidId();
@@ -219,6 +220,16 @@ public class RNPushe extends ReactContextBaseJavaModule implements LifecycleEven
             promise.reject(new Error("Could not get androidId"));
         } else {
             promise.resolve(androidId);
+        }
+    }
+
+    @ReactMethod
+    public void getDeviceId(final Promise promise) {
+        String deviceId = Pushe.getDeviceId();
+        if (deviceId == null) {
+            promise.reject(new Error("Could not retreive deviceId. Make sure Pushe is initialized first"));
+        } else {
+            promise.resolve(deviceId);
         }
     }
 
