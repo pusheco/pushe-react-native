@@ -130,18 +130,6 @@ class Pushe {
     }
 
     /**
-     * get user's pushe_id
-     * 
-     * it will return a promise.
-     * 
-     * @return {Promise<string>} Promise - if no callback passed
-     */
-    static getPusheId() {
-        if (Platform.OS === 'ios') return;
-        return RNPushe.getPusheId();
-    }
-
-    /**
      * get advertisingId
      * it will return a promise
      */
