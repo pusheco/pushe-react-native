@@ -43,6 +43,6 @@ If there is any issue in the library or any related topics to this module, searc
 
 
 [pushe-react-native-doc]: http://docs.pushe.co/docs/react-native/intro
-[pushe-native-android-doc]: http://docs.pushe.co/docs/android-studio/studio-intro/
+[pushe-native-android-doc]: http://docs.pushe.co/docs/android-studio/intro/
 [pushe-native-ios-doc]: http://docs.pushe.co/docs/ios/intro/
 [repo-issues]: https://github.com/pusheco/pushe-react-native/issues
