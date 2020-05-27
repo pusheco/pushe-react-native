@@ -1,7 +1,7 @@
 {
   "name": "pushe-react-native",
-  "version": "2.0.1",
-  "pushe-bundled-version": "2.0.4",
+  "version": "2.1.1",
+  "pushe-bundled-version": "2.1.1",
   "description": "pushe.co plugin for react native iOS and Android platforms",
   "main": "index.js",
   "scripts": {
