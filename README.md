@@ -35,7 +35,7 @@ For further informations see the [documentation][pushe-react-native-doc].
 
 There is a demo app available that implements the *Pushe React Native* module methods.
 you can access this project in the following address here.
-`https://github.com/pusheco/pushe-react-native/tree/master/PusheReactNativeDemoApp`.
+`https://github.com/pusheco/pushe-react-native-sample`.
 
 # Issues
 
