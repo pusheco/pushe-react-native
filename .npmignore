@@ -1,5 +1,6 @@
 
-PusheReactNativeDemoApp
-PusheReactNativeDemoApp/
 node_modules
+android/.gradle
+android/build
 .idea
+pushe-react-native*.tgz
