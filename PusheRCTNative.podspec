@@ -20,6 +20,6 @@ Pod::Spec.new do |s|
   s.static_framework = true
 
   s.dependency "React"
-  s.dependency "Pushe", "1.0.5"
+  s.dependency "Pushe", "1.0.8"
 end
 
