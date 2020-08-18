@@ -105,6 +105,15 @@ class Pushe {
     }
 
     /**
+     * for ios 13.6 and later, auto configuration feature doesnt work. so call this function to 
+     configure ios-sdk manually.
+     */
+    static configure() {
+        if (Platform.OS === 'android') return;
+        return RNPushe.configure();
+    }
+
+    /**
      * Check if Pushe is initialized or not
      *
      * it will return promise of type boolean

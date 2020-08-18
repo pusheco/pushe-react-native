@@ -4,6 +4,10 @@
 
 RCT_EXPORT_MODULE();
 
+RCT_EXPORT_METHOD(configure) {
+    [PusheClient.shared configure];
+}
+
 RCT_REMAP_METHOD(isRegistered,
                  resolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
