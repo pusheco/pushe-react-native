@@ -1,0 +1,23 @@
+{
+  "name": "pushe-react-native",
+  "version": "2.6.0",
+  "pushe-bundled-version": "2.6.0",
+  "pushe-ios-bundled-version": "1.0.16",
+  "description": "pushe.co plugin for react native iOS and Android platforms",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo 'Passing test stage. Add some test if you care' && exit 0"
+  },
+  "keywords": [
+    "react-native",
+    "pushe.co",
+    "notification"
+  ],
+  "author": "pushe.co",
+  "license": "",
+  "peerDependencies": {
+    "react-native": "^0.63.2",
+    "react-native-windows": "0.59.0-rc.1",
+    "invariant": "2.2.4"
+  }
+}

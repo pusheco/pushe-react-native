@@ -1,0 +1,51 @@
+buildscript {
+    repositories {
+        google()
+        jcenter()  
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.1.3'
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 31
+
+    defaultConfig {
+        minSdkVersion 17
+        targetSdkVersion 31
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+([rootProject] + (rootProject.subprojects as List)).each { project ->
+    project.repositories {
+        mavenCentral()
+        maven { url "https://developer.huawei.com/repo" }
+    }
+}
+
+repositories {
+    maven { url 'https://developer.huawei.com/repo/' }
+    jcenter()
+    google()
+    mavenCentral()
+}
+
+
+dependencies {
+    //noinspection GradleDynamicVersion
+    implementation('com.facebook.react:react-native:+')
+    def pushe_version = "2.6.3"
+    implementation("co.pushe.plus:base:$pushe_version")
+    implementation("co.pushe.plus:hms:$pushe_version")
+}
+  
